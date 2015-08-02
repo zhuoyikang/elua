@@ -1,0 +1,2358 @@
+
+lapi.c,3741
+#define lapi_c7,108
+#define LUA_CORE8,123
+const char lua_ident[lua_ident34,472
+#define NONVALIDVALUE	40,605
+#define isvalid(43,685
+#define ispseudo(46,757
+#define isupvalue(49,829
+#define isstackindex(52,920
+#define api_checkvalidindex(54,977
+#define api_checkstackindex(56,1049
+static TValue *index2addr index2addr60,1145
+static void growstack 91,2108
+LUA_API int lua_checkstack 97,2213
+LUA_API void lua_xmove 118,2864
+LUA_API lua_CFunction lua_atpanic 133,3262
+LUA_API const lua_Number *lua_version lua_version143,3451
+LUA_API int lua_absindex 159,3729
+LUA_API int lua_gettop 166,3884
+LUA_API void lua_settop 171,3975
+static void reverse 192,4513
+LUA_API void lua_rotate 206,4825
+LUA_API void lua_copy 221,5361
+LUA_API void lua_pushvalue 236,5792
+LUA_API int lua_type 250,5985
+LUA_API const char *lua_typename lua_typename256,6114
+LUA_API int lua_iscfunction 263,6274
+LUA_API int lua_isinteger 269,6408
+LUA_API int lua_isnumber 275,6521
+LUA_API int lua_isstring 282,6658
+LUA_API int lua_isuserdata 288,6793
+LUA_API int lua_rawequal 294,6946
+LUA_API void lua_arith 301,7158
+LUA_API int lua_compare 317,7674
+LUA_API size_t lua_stringtonumber 336,8197
+LUA_API lua_Number lua_tonumberx 344,8355
+LUA_API lua_Integer lua_tointegerx 355,8644
+LUA_API int lua_toboolean 366,8946
+LUA_API const char *lua_tolstring lua_tolstring372,9066
+LUA_API size_t lua_rawlen 390,9574
+LUA_API lua_CFunction lua_tocfunction 401,9854
+LUA_API void *lua_touserdata lua_touserdata410,10089
+LUA_API lua_State *lua_tothread lua_tothread420,10334
+LUA_API const void *lua_topointer lua_topointer426,10475
+LUA_API void lua_pushnil 448,10976
+LUA_API void lua_pushnumber 456,11096
+LUA_API void lua_pushinteger 464,11236
+LUA_API const char *lua_pushlstring lua_pushlstring472,11376
+LUA_API const char *lua_pushstring lua_pushstring484,11628
+LUA_API const char *lua_pushvfstring lua_pushvfstring502,11947
+LUA_API const char *lua_pushfstring lua_pushfstring513,12199
+LUA_API void lua_pushcclosure 526,12458
+LUA_API void lua_pushboolean 550,12997
+LUA_API void lua_pushlightuserdata 558,13165
+LUA_API int lua_pushthread 566,13305
+LUA_API int lua_getglobal 581,13507
+LUA_API int lua_gettable 593,13852
+LUA_API int lua_getfield 603,14051
+LUA_API int lua_geti 615,14326
+LUA_API int lua_rawget 627,14579
+LUA_API int lua_rawgeti 638,14834
+LUA_API int lua_rawgetp 650,15114
+LUA_API void lua_createtable 664,15438
+LUA_API int lua_getmetatable 677,15705
+LUA_API int lua_getuservalue 704,16213
+LUA_API void lua_setglobal 721,16526
+LUA_API void lua_settable 734,16909
+LUA_API void lua_setfield 745,17148
+LUA_API void lua_seti 757,17444
+LUA_API void lua_rawset 769,17718
+LUA_API void lua_rawseti 785,18066
+LUA_API void lua_rawsetp 800,18388
+LUA_API int lua_setmetatable 817,18769
+LUA_API void lua_setuservalue 857,19606
+#define checkresults(875,19971
+LUA_API void lua_callk 880,20137
+struct CallS 906,20964
+static void f_call 912,21038
+LUA_API int lua_pcallk 919,21176
+LUA_API int lua_load 963,22780
+LUA_API int lua_dump 987,23601
+LUA_API int lua_status 1002,23910
+LUA_API int lua_gc 1011,24012
+LUA_API int lua_error 1085,25722
+LUA_API int lua_next 1094,25940
+LUA_API void lua_concat 1111,26283
+LUA_API void lua_len 1127,26614
+LUA_API lua_Alloc lua_getallocf 1137,26782
+LUA_API void lua_setallocf 1147,26953
+LUA_API void *lua_newuserdata lua_newuserdata1155,27095
+static const char *aux_upvalue aux_upvalue1168,27324
+LUA_API const char *lua_getupvalue lua_getupvalue1193,28086
+LUA_API const char *lua_setupvalue lua_setupvalue1207,28416
+static UpVal **getupvalref getupvalref1228,28930
+LUA_API void *lua_upvalueid lua_upvalueid1239,29288
+LUA_API void lua_upvaluejoin 1258,29768
+
+lapi.h,112
+#define lapi_h8,146
+#define api_incr_top(14,205
+#define adjustresults(17,301
+#define api_checknelems(20,413
+
+lauxlib.c,2967
+#define lauxlib_c7,150
+#define LUA_LIB8,168
+#define LEVELS1	36,615
+#define LEVELS2	37,676
+static int findfield 45,841
+static int pushglobalfuncname 73,1750
+static void pushfuncname 94,2433
+static int countlevels 110,3097
+LUALIB_API void luaL_traceback 125,3419
+LUALIB_API int luaL_argerror 162,4612
+static int typeerror 180,5314
+static void tag_error 194,5883
+LUALIB_API void luaL_where 199,5987
+LUALIB_API int luaL_error 212,6396
+LUALIB_API int luaL_fileresult 223,6617
+#define l_inspectstat(250,7172
+#define l_inspectstat(256,7347
+LUALIB_API int luaL_execresult 263,7422
+LUALIB_API int luaL_newmetatable 288,8137
+LUALIB_API void luaL_setmetatable 301,8603
+LUALIB_API void *luaL_testudata luaL_testudata307,8735
+LUALIB_API void *luaL_checkudata luaL_checkudata322,9292
+LUALIB_API int luaL_checkoption 337,9685
+LUALIB_API void luaL_checkstack 350,10125
+LUALIB_API void luaL_checktype 362,10460
+LUALIB_API void luaL_checkany 368,10583
+LUALIB_API const char *luaL_checklstring luaL_checklstring374,10725
+LUALIB_API const char *luaL_optlstring luaL_optlstring381,10909
+LUALIB_API lua_Number luaL_checknumber 392,11198
+LUALIB_API lua_Number luaL_optnumber 401,11390
+static void interror 406,11523
+LUALIB_API lua_Integer luaL_checkinteger 414,11712
+LUALIB_API lua_Integer luaL_optinteger 424,11900
+#define buffonstack(442,12398
+LUALIB_API char *luaL_prepbuffsize luaL_prepbuffsize448,12513
+LUALIB_API void luaL_addlstring 470,13230
+LUALIB_API void luaL_addstring 477,13403
+LUALIB_API void luaL_pushresult 482,13508
+LUALIB_API void luaL_pushresultsize 490,13690
+LUALIB_API void luaL_addvalue 496,13805
+LUALIB_API void luaL_buffinit 507,14105
+LUALIB_API char *luaL_buffinitsize luaL_buffinitsize515,14244
+#define freelist	530,14625
+LUALIB_API int luaL_ref 533,14646
+LUALIB_API void luaL_unref 554,15340
+typedef struct LoadF 573,15836
+} LoadF;577,15989
+static const char *getF getF580,16000
+static int errfile 598,16662
+static int skipBOM 607,16947
+static int skipcomment 628,17642
+LUALIB_API int luaL_loadfilex 641,18021
+typedef struct LoadS 677,19327
+} LoadS;680,19382
+static const char *getS getS683,19393
+LUALIB_API int luaL_loadbufferx 693,19602
+LUALIB_API int luaL_loadstring 702,19845
+LUALIB_API int luaL_getmetafield 710,20022
+LUALIB_API int luaL_callmeta 726,20477
+LUALIB_API lua_Integer luaL_len 736,20730
+LUALIB_API const char *luaL_tolstring luaL_tolstring748,20996
+static const char *luaL_findtable luaL_findtable784,22045
+static int libsize 813,23029
+LUALIB_API void luaL_pushmodule 826,23363
+LUALIB_API void luaL_openlib 842,24057
+LUALIB_API void luaL_setfuncs 863,24717
+LUALIB_API int luaL_getsubtable 880,25274
+LUALIB_API void luaL_requiref 900,26002
+LUALIB_API const char *luaL_gsub luaL_gsub920,26816
+static void *l_alloc l_alloc937,27383
+static int panic 948,27596
+LUALIB_API lua_State *luaL_newstate luaL_newstate955,27799
+LUALIB_API void luaL_checkversion_ 962,27939
+
+lauxlib.h,1195
+#define lauxlib_h9,169
+#define LUA_ERRFILE 20,288
+typedef struct luaL_Reg 23,329
+} luaL_Reg;26,397
+#define LUAL_NUMSIZES	29,411
+#define luaL_checkversion(32,560
+#define LUA_NOREF 69,2489
+#define LUA_REFNIL 70,2518
+#define luaL_loadfile(78,2795
+#define luaL_newlibtable(108,3897
+#define luaL_newlib(111,3984
+#define luaL_argcheck(114,4083
+#define luaL_checkstring(116,4187
+#define luaL_optstring(117,4251
+#define luaL_typename(119,4319
+#define luaL_dofile(121,4380
+#define luaL_dostring(124,4469
+#define luaL_getmetatable(127,4560
+#define luaL_opt(129,4634
+#define luaL_loadbuffer(131,4703
+typedef struct luaL_Buffer 140,4927
+} luaL_Buffer;146,5142
+#define luaL_addchar(149,5159
+#define luaL_addsize(153,5279
+#define luaL_prepbuffer(164,5845
+#define LUA_FILEHANDLE 182,6304
+typedef struct luaL_Stream 185,6346
+} luaL_Stream;188,6513
+#define luaL_register(202,6918
+#define lua_writestring(215,7248
+#define lua_writeline(220,7397
+#define lua_writestringerror(225,7543
+#define luaL_checkunsigned(239,7933
+#define luaL_optunsigned(240,8004
+#define luaL_checkint(243,8094
+#define luaL_optint(244,8154
+#define luaL_checklong(246,8218
+#define luaL_optlong(247,8280
+
+lbaselib.c,1246
+#define lbaselib_c7,118
+#define LUA_LIB8,137
+static int luaB_print 24,317
+#define SPACECHARS	46,920
+static const char *b_str2int b_str2int48,954
+static int luaB_tonumber 69,1650
+static int luaB_error 102,2666
+static int luaB_getmetatable 114,2945
+static int luaB_setmetatable 125,3229
+static int luaB_rawequal 138,3624
+static int luaB_rawlen 146,3773
+static int luaB_rawget 155,4002
+static int luaB_rawset 163,4156
+static int luaB_collectgarbage 173,4334
+static int luaB_type 204,5233
+static int pairsmeta 211,5368
+static int luaB_next 228,5969
+static int luaB_pairs 240,6198
+static int ipairsaux_raw 248,6345
+static int ipairsaux 259,6621
+static int luaB_ipairs 271,6960
+static int load_aux 286,7389
+static int luaB_loadfile 303,7945
+#define RESERVEDSLOT	324,8611
+static const char *generic_reader generic_reader333,8855
+static int luaB_load 350,9403
+static int dofilecont 372,10175
+static int luaB_dofile 378,10341
+static int luaB_assert 388,10598
+static int luaB_select 401,11060
+static int finishpcall 424,11727
+static int luaB_pcall 435,12083
+static int luaB_xpcall 450,12597
+static int luaB_tostring 462,12999
+static const luaL_Reg base_funcs[base_funcs469,13110
+LUAMOD_API int luaopen_base 502,13924
+
+lbitlib.c,722
+#define lbitlib_c7,142
+#define LUA_LIB8,160
+#define LUA_NBITS	24,372
+#define ALLONES	33,591
+#define trim(37,691
+#define mask(41,784
+static lua_Unsigned andaux 45,837
+static int b_and 54,1030
+static int b_test 61,1136
+static int b_or 68,1247
+static int b_xor 78,1440
+static int b_not 88,1634
+static int b_shift 95,1762
+static int b_lshift 112,2085
+static int b_rshift 117,2198
+static int b_arshift 122,2312
+static int b_rot 137,2760
+static int b_lrot 148,3080
+static int b_rrot 153,3163
+static int fieldargs 164,3465
+static int b_extract 176,3869
+static int b_replace 186,4066
+static const luaL_Reg bitlib[bitlib199,4383
+LUAMOD_API int luaopen_bit32 217,4706
+LUAMOD_API int luaopen_bit32 226,4815
+
+lcode.c,1995
+#define lcode_c7,123
+#define LUA_CORE8,139
+#define MAXREGS	33,522
+#define hasjumps(36,545
+static int tonumeral(39,586
+void luaK_nil 54,900
+int luaK_jump 76,1720
+void luaK_ret 86,1951
+static int condjump 91,2057
+static void fixjump 97,2188
+int luaK_getlabel 111,2619
+static int getjump 117,2703
+static Instruction *getjumpcontrol getjumpcontrol126,2981
+static int need_value 139,3275
+static int patchtestreg 148,3510
+static void removevalues 161,3923
+static void patchlistaux 167,4070
+static void dischargejpc 180,4415
+void luaK_patchlist 186,4536
+void luaK_patchclose 196,4754
+void luaK_patchtohere 209,5165
+void luaK_concat 215,5275
+static int luaK_code 229,5569
+int luaK_codeABC 244,6083
+int luaK_codeABx 253,6394
+static int codeextraarg 261,6659
+int luaK_codek 267,6793
+void luaK_checkstack 278,7016
+void luaK_reserveregs 288,7290
+static void freereg 294,7387
+static void freeexp 302,7538
+static int addk 312,7752
+int luaK_stringK 339,8692
+int luaK_intK 351,8975
+static int luaK_numberK 359,9135
+static int boolK 366,9256
+static int nilK 373,9361
+void luaK_setreturns 382,9572
+void luaK_setoneret 394,9902
+void luaK_dischargevars 406,10219
+static int code_label 438,11006
+static void discharge2reg 444,11193
+static void discharge2anyreg 487,12121
+static void exp2reg 495,12285
+void luaK_exp2nextreg 519,13091
+int luaK_exp2anyreg 527,13256
+void luaK_exp2anyregup 541,13658
+void luaK_exp2val 547,13780
+int luaK_exp2RK 555,13917
+void luaK_storevar 591,14768
+void luaK_self 618,15407
+static void invertjump 631,15825
+static int jumponcond 639,16116
+void luaK_goiftrue 654,16530
+void luaK_goiffalse 678,17052
+static void codenot 701,17530
+void luaK_indexed 736,18275
+static int validop 749,18614
+static int constfolding 766,19139
+static void codeexpval 793,20069
+static void codecomp 824,21089
+void luaK_prefix 840,21568
+void luaK_infix 854,21943
+void luaK_posfix 884,22592
+void luaK_fixline 935,24153
+void luaK_setlist 940,24241
+
+lcode.h,1198
+#define lcode_h8,139
+#define NO_JUMP 20,389
+typedef enum BinOpr 26,476
+  OPR_ADD,27,498
+  OPR_ADD, OPR_SUB,27,498
+  OPR_ADD, OPR_SUB, OPR_MUL,27,498
+  OPR_ADD, OPR_SUB, OPR_MUL, OPR_MOD,27,498
+  OPR_ADD, OPR_SUB, OPR_MUL, OPR_MOD, OPR_POW,27,498
+  OPR_DIV,28,545
+  OPR_IDIV,29,556
+  OPR_BAND,30,568
+  OPR_BAND, OPR_BOR,30,568
+  OPR_BAND, OPR_BOR, OPR_BXOR,30,568
+  OPR_SHL,31,599
+  OPR_SHL, OPR_SHR,31,599
+  OPR_CONCAT,32,619
+  OPR_EQ,33,633
+  OPR_EQ, OPR_LT,33,633
+  OPR_EQ, OPR_LT, OPR_LE,33,633
+  OPR_NE,34,659
+  OPR_NE, OPR_GT,34,659
+  OPR_NE, OPR_GT, OPR_GE,34,659
+  OPR_AND,35,685
+  OPR_AND, OPR_OR,35,685
+  OPR_NOBINOPR36,704
+} BinOpr;37,719
+typedef enum UnOpr 40,731
+typedef enum UnOpr { OPR_MINUS,40,731
+typedef enum UnOpr { OPR_MINUS, OPR_BNOT,40,731
+typedef enum UnOpr { OPR_MINUS, OPR_BNOT, OPR_NOT,40,731
+typedef enum UnOpr { OPR_MINUS, OPR_BNOT, OPR_NOT, OPR_LEN,40,731
+typedef enum UnOpr { OPR_MINUS, OPR_BNOT, OPR_NOT, OPR_LEN, OPR_NOUNOPR 40,731
+typedef enum UnOpr { OPR_MINUS, OPR_BNOT, OPR_NOT, OPR_LEN, OPR_NOUNOPR } UnOpr;40,731
+#define getcode(43,814
+#define luaK_codeAsBx(45,866
+#define luaK_setmultret(47,939
+#define luaK_jumpto(49,1006
+
+lcorolib.c,479
+#define lcorolib_c7,120
+#define LUA_LIB8,139
+static lua_State *getco getco21,261
+static int auxresume 28,403
+static int luaB_coresume 57,1268
+static int luaB_auxwrap 74,1638
+static int luaB_cocreate 89,2026
+static int luaB_cowrap 99,2273
+static int luaB_yield 106,2389
+static int luaB_costatus 111,2470
+static int luaB_yieldable 138,3174
+static int luaB_corunning 144,3275
+static const luaL_Reg co_funcs[co_funcs151,3398
+LUAMOD_API int luaopen_coroutine 164,3659
+
+lctype.c,102
+#define lctype_c7,127
+#define LUA_CORE8,144
+LUAI_DDEF const lu_byte luai_ctype_[luai_ctype_19,255
+
+lctype.h,681
+#define lctype_h8,144
+#define LUA_USE_CTYPE	23,479
+#define LUA_USE_CTYPE	26,541
+#define ALPHABIT	39,654
+#define DIGITBIT	40,673
+#define PRINTBIT	41,692
+#define SPACEBIT	42,711
+#define XDIGITBIT	43,730
+#define MASK(46,752
+#define testprop(52,829
+#define lislalpha(57,963
+#define lislalnum(58,1012
+#define lisdigit(59,1080
+#define lisspace(60,1128
+#define lisprint(61,1176
+#define lisxdigit(62,1224
+#define ltolower(67,1337
+LUAI_DDEC const lu_byte luai_ctype_[luai_ctype_71,1421
+#define lislalpha(83,1546
+#define lislalnum(84,1594
+#define lisdigit(85,1642
+#define lisspace(86,1675
+#define lisprint(87,1708
+#define lisxdigit(88,1741
+#define ltolower(90,1777
+
+ldblib.c,1052
+#define ldblib_c7,138
+#define LUA_LIB8,155
+static const int HOOKKEY 27,458
+static int db_getregistry 30,490
+static int db_getmetatable 36,588
+static int db_setmetatable 45,748
+static int db_getuservalue 55,1009
+static int db_setuservalue 64,1163
+static lua_State *getthread getthread79,1574
+static void settabss 96,1988
+static void settabsi 101,2109
+static void settabsb 106,2223
+static void treatstackoption 119,2624
+static int db_getinfo 131,2982
+static int db_getlocal 178,4537
+static int db_setlocal 208,5510
+static int auxupvalue 231,6161
+static int db_getupvalue 243,6545
+static int db_setupvalue 248,6618
+static int checkupval 258,6806
+static int db_upvalueid 267,7122
+static int db_upvaluejoin 274,7262
+static void hookf 288,7662
+static int makemask 307,8310
+static char *unmakemask unmakemask320,8644
+static int db_sethook 330,8880
+static int db_gethook 361,9998
+static int db_debug 383,10714
+static int db_traceback 398,11164
+static const luaL_Reg dblib[dblib412,11571
+LUAMOD_API int luaopen_debug 433,12133
+
+ldebug.c,1345
+#define ldebug_c7,118
+#define LUA_CORE8,135
+#define noLuaClosure(34,489
+static int currentpc 40,637
+static int currentline 46,753
+LUA_API void lua_sethook 54,923
+LUA_API lua_Hook lua_gethook 68,1253
+LUA_API int lua_gethookmask 73,1321
+LUA_API int lua_gethookcount 78,1392
+LUA_API int lua_getstack 83,1469
+static const char *upvalname upvalname100,1902
+static const char *findvararg findvararg107,2080
+static const char *findlocal findlocal118,2392
+LUA_API const char *lua_getlocal lua_getlocal144,3128
+LUA_API const char *lua_setlocal lua_setlocal166,3792
+static void funcinfo 179,4101
+static void collectvalidlines 197,4575
+static int auxgetinfo 216,5151
+LUA_API int lua_getinfo 267,6474
+static void kname 311,7477
+static int filterpc 331,8110
+static int findsetreg 341,8427
+static const char *getobjname getobjname387,9785
+static const char *getfuncname getfuncname441,11492
+static int isinstack 494,13370
+static const char *getupvalname getupvalname505,13703
+static const char *varinfo varinfo519,14017
+l_noret luaG_typeerror 533,14532
+l_noret luaG_concaterror 539,14715
+l_noret luaG_opinterror 545,14883
+l_noret luaG_tointerror 557,15234
+l_noret luaG_ordererror 565,15455
+static void addinfo 575,15756
+l_noret luaG_errormsg 591,16233
+l_noret luaG_runerror 603,16637
+void luaG_traceexec 612,16824
+
+ldebug.h,128
+#define ldebug_h8,166
+#define pcRel(14,207
+#define getfuncline(16,263
+#define resethookcount(18,333
+#define ci_func(21,438
+
+ldo.c,1345
+#define ldo_c7,131
+#define LUA_CORE8,145
+#define errorstatus(38,575
+#define LUAI_THROW(58,1126
+#define LUAI_TRY(59,1160
+#define luai_jmpbuf	61,1252
+#define LUAI_THROW(66,1396
+#define LUAI_TRY(67,1441
+#define luai_jmpbuf	68,1498
+#define LUAI_THROW(73,1587
+#define LUAI_TRY(74,1631
+#define luai_jmpbuf	75,1687
+struct lua_longjmp 84,1801
+static void seterrorobj 91,1917
+l_noret luaD_throw 110,2407
+int luaD_rawrunprotected 136,3374
+static void correctstack 153,3822
+#define ERRORSTACKSIZE	169,4327
+void luaD_reallocstack 172,4374
+void luaD_growstack 186,4888
+static int stackinuse 205,5456
+void luaD_shrinkstack 216,5740
+void luaD_hook 232,6390
+static void callhook 259,7173
+static StkId adjust_varargs 272,7556
+static void tryfuncTM 294,8278
+#define next_ci(308,8688
+int luaD_precall 314,8831
+int luaD_poscall 382,11191
+void luaD_call 413,12265
+static void finishCcall 432,12885
+static void unroll 464,14073
+static CallInfo *findpcall findpcall482,14658
+static int recover 497,15097
+static l_noret resume_error 519,15831
+static void resume 534,16408
+LUA_API int lua_resume 571,17864
+LUA_API int lua_isyieldable 602,19004
+LUA_API int lua_yieldk 607,19077
+int luaD_pcall 636,20061
+struct SParser 663,20775
+static void checkmode 672,20994
+static void f_parser 681,21238
+int luaD_protectedparser 698,21717
+
+ldo.h,167
+#define ldo_h8,144
+#define luaD_checkstack(16,221
+#define incr_top(20,342
+#define savestack(22,397
+#define restorestack(23,454
+typedef void (*Pfunc)Pfunc27,582
+
+ldump.c,585
+#define ldump_c7,128
+#define LUA_CORE8,144
+} DumpState;28,383
+#define DumpVector(35,511
+#define DumpLiteral(37,572
+static void DumpBlock 40,641
+#define DumpVar(49,836
+static void DumpByte 52,879
+static void DumpInt 58,971
+static void DumpNumber 63,1036
+static void DumpInteger 68,1111
+static void DumpString 73,1188
+static void DumpCode 89,1549
+static void DumpConstants 97,1748
+static void DumpProtos 127,2337
+static void DumpUpvalues 136,2510
+static void DumpDebug 146,2729
+static void DumpFunction 165,3219
+static void DumpHeader 183,3707
+int luaU_dump(201,4139
+
+lfunc.c,381
+#define lfunc_c7,158
+#define LUA_CORE8,174
+CClosure *luaF_newCclosure luaF_newCclosure25,352
+LClosure *luaF_newLclosure luaF_newLclosure33,537
+void luaF_initupvals 45,820
+UpVal *luaF_findupval luaF_findupval57,1083
+void luaF_close 83,1863
+Proto *luaF_newproto luaF_newproto99,2373
+void luaF_freeproto 125,2891
+const char *luaF_getlocalname luaF_getlocalname140,3332
+
+lfunc.h,152
+#define lfunc_h8,174
+#define sizeCclosure(14,215
+#define sizeLclosure(17,333
+#define isintwups(22,499
+struct UpVal 28,573
+#define upisopen(40,905
+
+lgc.c,2369
+#define lgc_c7,117
+#define LUA_CORE8,131
+#define GCSinsideatomic	33,547
+#define GCSWEEPCOST	39,701
+#define GCSWEEPMAX	42,812
+#define GCFINALIZECOST	45,911
+#define STEPMULADJ	52,1066
+#define PAUSEADJ	59,1202
+#define maskcolors	66,1309
+#define makewhite(67,1363
+#define white2gray(70,1456
+#define black2gray(71,1510
+#define valiswhite(74,1564
+#define checkdeadkey(76,1631
+#define checkconsistency(79,1711
+#define markvalue(83,1800
+#define markobject(86,1904
+#define gnodelast(102,2251
+#define linkgclist(108,2372
+static void removeentry 115,2532
+static int iscleared 129,3023
+void luaC_barrier_ 145,3514
+void luaC_barrierback_ 161,4050
+void luaC_upvalbarrier_ 175,4486
+void luaC_fix 184,4717
+GCObject *luaC_newobj luaC_newobj198,5149
+static void reallymarkobject 225,5871
+static void markmt 275,6967
+static void markbeingfnz 285,7135
+static void remarkupvals 298,7517
+static void restartcollection 323,8351
+static void traverseweakvalue 347,9108
+static int traverseephemeron 380,10490
+static void traversestrongtable 419,11955
+static lu_mem traversetable 437,12496
+static int traverseproto 460,13356
+static lu_mem traverseCclosure 482,14280
+static lu_mem traverseLclosure 495,14742
+static lu_mem traversethread 511,15204
+static void propagatemark 539,16251
+static void propagateall 583,17392
+static void convergeephemerons 588,17477
+static void clearkeys 619,18328
+static void clearvalues 637,18832
+void luaC_upvdeccount 657,19437
+static void freeLclosure 665,19605
+static void freeobj 676,19844
+#define sweepwholelist(702,20571
+static GCObject **sweeplist sweeplist713,21013
+static GCObject **sweeptolive sweeptolive736,21700
+static void checkSizes 759,22180
+static GCObject *udata2finalize udata2finalize770,22580
+static void dothecall 783,22997
+static void GCTM 789,23098
+static int runafewfinalizers 824,24443
+static void callallpendingfinalizers 839,24868
+static GCObject **findlast findlast849,25102
+static void separatetobefnz 860,25342
+void luaC_checkfinalizer 882,26059
+static void setpause 920,27388
+static int entersweep 940,28095
+void luaC_freeallobjects 950,28297
+static l_mem atomic 965,28804
+static lu_mem sweepstep 1011,30883
+static lu_mem singlestep 1027,31377
+void luaC_runtilstate 1087,33259
+static l_mem getdebt 1098,33501
+void luaC_step 1109,33776
+void luaC_fullgc 1139,34923
+
+lgc.h,1141
+#define lgc_h8,130
+#define GCSTEPSIZE	32,950
+#define GCSpropagate	39,1062
+#define GCSatomic	40,1085
+#define GCSswpallgc	41,1105
+#define GCSswpfinobj	42,1127
+#define GCSswptobefnz	43,1150
+#define GCSswpend	44,1174
+#define GCScallfin	45,1194
+#define GCSpause	46,1215
+#define issweepphase(49,1236
+#define keepinvariant(61,1633
+#define resetbits(67,1720
+#define setbits(68,1773
+#define testbits(69,1808
+#define bitmask(70,1843
+#define bit2mask(71,1872
+#define l_setbit(72,1925
+#define resetbit(73,1971
+#define testbit(74,2019
+#define WHITE0BIT	78,2111
+#define WHITE1BIT	79,2163
+#define BLACKBIT	80,2215
+#define FINALIZEDBIT	81,2257
+#define WHITEBITS	84,2386
+#define iswhite(87,2437
+#define isblack(88,2494
+#define isgray(89,2549
+#define tofinalize(92,2659
+#define otherwhite(94,2717
+#define isdeadm(95,2771
+#define isdead(96,2823
+#define changewhite(98,2880
+#define gray2black(99,2930
+#define luaC_white(101,2985
+#define luaC_condGC(104,3054
+#define luaC_checkGC(106,3130
+#define luaC_barrier(109,3187
+#define luaC_barrierback(113,3327
+#define luaC_objbarrier(117,3455
+#define luaC_upvalbarrier(121,3569
+
+linit.c,135
+#define linit_c8,157
+#define LUA_LIB9,173
+static const luaL_Reg loadedlibs[loadedlibs42,969
+LUALIB_API void luaL_openlibs 60,1438
+
+liolib.c,2409
+#define liolib_c7,136
+#define LUA_LIB8,153
+#define l_checkmode(33,536
+#define l_popen(52,1047
+#define l_pclose(53,1098
+#define l_popen(57,1180
+#define l_pclose(58,1218
+#define l_popen(63,1303
+#define l_pclose(67,1413
+#define l_getc(79,1626
+#define l_lockfile(80,1662
+#define l_unlockfile(81,1698
+#define l_getc(83,1744
+#define l_lockfile(84,1771
+#define l_unlockfile(85,1804
+#define l_fseek(103,2129
+#define l_ftell(104,2167
+#define l_seeknum	105,2197
+#define l_fseek(111,2400
+#define l_ftell(112,2441
+#define l_seeknum	113,2474
+#define l_fseek(118,2545
+#define l_ftell(119,2582
+#define l_seeknum	120,2611
+#define IO_PREFIX	129,2738
+#define IOPREF_LEN	130,2763
+#define IO_INPUT	131,2819
+#define IO_OUTPUT	132,2856
+typedef luaL_Stream LStream;135,2897
+#define tolstream(138,2928
+#define isclosed(140,3001
+static int io_type 143,3045
+static int f_tostring 157,3346
+static FILE *tofile tofile167,3540
+static LStream *newprefile newprefile181,3889
+static int aux_close 194,4268
+static int io_close 202,4464
+static int f_gc 210,4707
+static int io_fclose 221,4929
+static LStream *newfile newfile228,5073
+static void opencheck 236,5201
+static int io_open 244,5430
+static int io_pclose 258,5841
+static int io_popen 264,5960
+static int io_tmpfile 274,6254
+static FILE *getiofile getiofile281,6403
+static int g_iofile 291,6671
+static int io_input 308,7111
+static int io_output 313,7189
+static void aux_lines 321,7310
+static int f_lines 330,7678
+static int io_lines 337,7805
+#define MAXRN	365,8641
+} RN;373,8909
+static int nextc 379,8993
+static int test2 395,9347
+static int readdigits 405,9536
+#define l_getlocaledecpoint(415,9783
+static int read_number 424,10052
+static int test_eof 457,11210
+static int read_line 465,11374
+static void read_all 486,12136
+static int read_chars 499,12511
+static int g_read 512,12932
+static int io_read 562,14455
+static int f_read 567,14542
+static int io_readline 572,14615
+static int g_write 603,15753
+static int io_write 625,16479
+static int f_write 630,16569
+static int f_seek 637,16733
+static int f_setvbuf 656,17337
+static int io_flush 668,17736
+static int f_flush 673,17850
+static const luaL_Reg iolib[iolib681,17985
+static const luaL_Reg flib[flib700,18326
+static void createmeta 714,18582
+static int io_noclose 726,19014
+static void createstdfile 735,19219
+LUAMOD_API int luaopen_io 748,19581
+
+llex.c,1120
+#define llex_c7,116
+#define LUA_CORE8,131
+#define next(31,427
+#define currIsNewline(35,476
+static const char *const luaX_tokens 39,570
+#define save_and_next(50,941
+static void save 56,1073
+void luaX_init 69,1438
+const char *luaX_token2str luaX_token2str81,1812
+static const char *txtToken txtToken96,2284
+static l_noret lexerror 108,2575
+l_noret luaX_syntaxerror 118,2918
+TString *luaX_newstring luaX_newstring128,3198
+static void inclinenumber 152,4001
+void luaX_setinput 163,4317
+static int check_next1 188,4946
+static int check_next2 201,5157
+static void buffreplace 214,5418
+#define l_getlocaledecpoint(225,5668
+#define buff2num(229,5740
+static void trydecpoint 235,5934
+static int read_numeral 252,6487
+static int skip_sep 289,7523
+static void read_long_string 302,7784
+static void esccheck 341,9024
+static int gethexa 350,9240
+static int readhexaesc 357,9410
+static unsigned long readutf8esc 365,9589
+static void utf8esc 383,10213
+static int readdecesc 391,10411
+static void read_string 404,10785
+static int llex 467,13065
+void luaX_next 586,16625
+int luaX_lookahead 597,16952
+
+llex.h,1730
+#define llex_h8,131
+#define FIRST_RESERVED	14,188
+#define LUA_ENV	18,239
+enum RESERVED 26,358
+  TK_AND 28,425
+  TK_AND = FIRST_RESERVED,28,425
+  TK_AND = FIRST_RESERVED, TK_BREAK,28,425
+  TK_DO,29,462
+  TK_DO, TK_ELSE,29,462
+  TK_DO, TK_ELSE, TK_ELSEIF,29,462
+  TK_DO, TK_ELSE, TK_ELSEIF, TK_END,29,462
+  TK_DO, TK_ELSE, TK_ELSEIF, TK_END, TK_FALSE,29,462
+  TK_DO, TK_ELSE, TK_ELSEIF, TK_END, TK_FALSE, TK_FOR,29,462
+  TK_DO, TK_ELSE, TK_ELSEIF, TK_END, TK_FALSE, TK_FOR, TK_FUNCTION,29,462
+  TK_GOTO,30,530
+  TK_GOTO, TK_IF,30,530
+  TK_GOTO, TK_IF, TK_IN,30,530
+  TK_GOTO, TK_IF, TK_IN, TK_LOCAL,30,530
+  TK_GOTO, TK_IF, TK_IN, TK_LOCAL, TK_NIL,30,530
+  TK_GOTO, TK_IF, TK_IN, TK_LOCAL, TK_NIL, TK_NOT,30,530
+  TK_GOTO, TK_IF, TK_IN, TK_LOCAL, TK_NIL, TK_NOT, TK_OR,30,530
+  TK_GOTO, TK_IF, TK_IN, TK_LOCAL, TK_NIL, TK_NOT, TK_OR, TK_REPEAT,30,530
+  TK_RETURN,31,599
+  TK_RETURN, TK_THEN,31,599
+  TK_RETURN, TK_THEN, TK_TRUE,31,599
+  TK_RETURN, TK_THEN, TK_TRUE, TK_UNTIL,31,599
+  TK_RETURN, TK_THEN, TK_TRUE, TK_UNTIL, TK_WHILE,31,599
+  TK_IDIV,33,681
+  TK_IDIV, TK_CONCAT,33,681
+  TK_IDIV, TK_CONCAT, TK_DOTS,33,681
+  TK_IDIV, TK_CONCAT, TK_DOTS, TK_EQ,33,681
+  TK_IDIV, TK_CONCAT, TK_DOTS, TK_EQ, TK_GE,33,681
+  TK_IDIV, TK_CONCAT, TK_DOTS, TK_EQ, TK_GE, TK_LE,33,681
+  TK_IDIV, TK_CONCAT, TK_DOTS, TK_EQ, TK_GE, TK_LE, TK_NE,33,681
+  TK_SHL,34,740
+  TK_SHL, TK_SHR,34,740
+  TK_DBCOLON,35,758
+  TK_DBCOLON, TK_EOS,35,758
+  TK_FLT,36,780
+  TK_FLT, TK_INT,36,780
+  TK_FLT, TK_INT, TK_NAME,36,780
+  TK_FLT, TK_INT, TK_NAME, TK_STRING36,780
+#define NUM_RESERVED	40,852
+} SemInfo;47,978
+typedef struct Token 50,1020
+} Token;53,1075
+typedef struct LexState 58,1168
+} LexState;73,1830
+
+llimits.h,1837
+#define llimits_h8,194
+typedef LUAI_UMEM lu_mem;23,539
+typedef LUAI_MEM l_mem;24,565
+typedef size_t lu_mem;26,623
+typedef ptrdiff_t l_mem;27,646
+typedef unsigned long lu_mem;29,705
+typedef long l_mem;30,735
+typedef unsigned char lu_byte;35,854
+#define MAX_SIZET	39,918
+#define MAX_SIZE	42,1035
+#define MAX_LUMEM	46,1160
+#define MAX_LMEM	48,1202
+#define MAX_INT	51,1247
+#define point2int(59,1451
+typedef LUAI_USER_ALIGNMENT_T L_Umaxalign;65,1590
+typedef union { double u; void *s; lua_Integer i; long l; } L_Umaxalign;67,1639
+typedef LUAI_UACNUMBER l_uacNumber;73,1797
+typedef LUAI_UACINT l_uacInt;74,1833
+#define check_exp(79,1938
+#define lua_longassert(81,2032
+#define lua_assert(83,2093
+#define check_exp(84,2126
+#define lua_longassert(85,2154
+#define luai_apicheck(93,2290
+#define luai_apicheck(95,2331
+#define api_check(99,2379
+#define UNUSED(103,2453
+#define cast(107,2516
+#define cast_void(109,2549
+#define cast_byte(110,2586
+#define cast_num(111,2626
+#define cast_int(112,2668
+#define cast_uchar(113,2703
+#define l_castS2U(118,2824
+#define l_castU2S(127,3039
+#define l_noret	135,3135
+#define l_noret	137,3227
+#define l_noret	139,3276
+#define LUAI_MAXCCALLS	149,3476
+#define MAXUPVAL	156,3620
+typedef unsigned int Instruction;164,3795
+typedef unsigned long Instruction;166,3835
+#define MINSTRTABSIZE	174,3970
+#define LUA_MINBUFFER	180,4113
+#define lua_lock(185,4170
+#define lua_unlock(186,4201
+#define luai_threadyield(190,4273
+#define luai_userstateopen(200,4554
+#define luai_userstateclose(204,4637
+#define luai_userstatethread(208,4722
+#define luai_userstatefree(212,4808
+#define luai_userstateresume(216,4894
+#define luai_userstateyield(220,4980
+#define condmovestack(229,5139
+#define condmovestack(232,5217
+#define condchangemem(236,5316
+#define condchangemem(238,5364
+
+lmathlib.c,1268
+#define lmathlib_c7,134
+#define LUA_LIB8,153
+#undef PI22,293
+#define PI	23,303
+#define l_rand(28,424
+#define l_srand(29,450
+#define L_RANDMAX	30,480
+#define l_rand(32,549
+#define l_srand(33,573
+#define L_RANDMAX	34,601
+static int math_abs 39,655
+static int math_sin 50,920
+static int math_cos 55,1032
+static int math_tan 60,1144
+static int math_asin 65,1256
+static int math_acos 70,1370
+static int math_atan 75,1484
+static int math_toint 83,1665
+static void pushnumint 96,1922
+static int math_floor 105,2174
+static int math_ceil 116,2405
+static int math_fmod 127,2633
+static int math_modf 149,3320
+static int math_sqrt 166,3826
+static int math_ult 172,3941
+static int math_log 179,4136
+static int math_exp 193,4490
+static int math_deg 198,4602
+static int math_rad 203,4724
+static int math_min 209,4847
+static int math_max 223,5182
+static int math_random 241,5738
+static int math_randomseed 271,6668
+static int math_type 278,6866
+static int math_cosh 300,7371
+static int math_sinh 305,7485
+static int math_tanh 310,7599
+static int math_pow 315,7713
+static int math_frexp 322,7889
+static int math_ldexp 329,8043
+static int math_log10 336,8224
+static const luaL_Reg mathlib[mathlib346,8424
+LUAMOD_API int luaopen_math 392,9412
+
+lmem.c,187
+#define lmem_c7,127
+#define LUA_CORE8,142
+#define MINSIZEARRAY	45,929
+void *luaM_growaux_ luaM_growaux_48,954
+l_noret luaM_toobig 68,1633
+void *luaM_realloc_ luaM_realloc_77,1774
+
+lmem.h,363
+#define lmem_h8,142
+#define luaM_reallocv(30,917
+#define luaM_reallocvchar(38,1165
+#define luaM_freemem(41,1282
+#define luaM_free(42,1342
+#define luaM_freearray(43,1406
+#define luaM_malloc(45,1484
+#define luaM_new(46,1540
+#define luaM_newvector(47,1600
+#define luaM_newobject(50,1686
+#define luaM_growvector(52,1752
+#define luaM_reallocvector(56,1917
+
+loadlib.c,2333
+#define loadlib_c11,291
+#define LUA_LIB12,309
+#define LUA_PATH_VAR	31,597
+#define LUA_CPATH_VAR	35,665
+#define LUA_PATHSUFFIX	38,707
+#define LUA_PATHVARVERSION	40,776
+#define LUA_CPATHVARVERSION	41,832
+#define LUA_PATH_SEP	53,1251
+#define LUA_PATH_MARK	56,1313
+#define LUA_EXEC_DIR	59,1375
+#define LUA_IGMARK	62,1434
+#define LUA_CSUBSEP	73,1709
+#define LUA_LSUBSEP	77,1775
+#define LUA_POF	82,1863
+#define LUA_OFSEP	85,1942
+static const int CLIBS 92,2061
+#define LIB_FAIL	94,2090
+#define setprogdir(96,2115
+#define cast_func(144,3488
+#define cast_func(146,3550
+static void lsys_unloadlib 150,3601
+static void *lsys_load lsys_load155,3662
+static lua_CFunction lsys_sym 162,3875
+#undef setprogdir181,4415
+#define LUA_LLE_FLAGS	187,4504
+static void setprogdir 191,4537
+static void pusherror 206,4972
+static void lsys_unloadlib 216,5301
+static void *lsys_load lsys_load221,5375
+static lua_CFunction lsys_sym 229,5622
+#undef LIB_FAIL245,6050
+#define LIB_FAIL	246,6066
+#define DLMSG	249,6094
+static void lsys_unloadlib 252,6171
+static void *lsys_load lsys_load257,6247
+static lua_CFunction lsys_sym 264,6413
+static void *checkclib checkclib277,6698
+static void addtoclib 291,7106
+static int gctm 305,7554
+#define ERRLIB	318,7876
+#define ERRFUNC	319,7894
+static int lookforfunc 332,8373
+static int ll_loadlib 353,9112
+static int readable 376,9738
+static const char *pushnexttemplate pushnexttemplate384,9916
+static const char *searchpath searchpath395,10301
+static int ll_searchpath 418,11354
+static const char *findfile findfile432,11813
+static int checkload 444,12230
+static int searcher_Lua 455,12645
+static int loadfunc 472,13347
+static int searcher_C 490,13968
+static int searcher_Croot 498,14262
+static int searcher_preload 520,14992
+static void findloader 529,15279
+static int ll_require 557,16360
+static void set_env 594,17681
+static void dooptions 606,18068
+static void modinit 618,18358
+static int ll_module 633,18852
+static int ll_seeall 651,19376
+#define AUXMARK	669,19808
+static int noenv 675,19880
+static void setpath 684,20055
+static const luaL_Reg pk_funcs[pk_funcs703,20793
+static const luaL_Reg ll_funcs[ll_funcs719,21095
+static void createsearcherstable 728,21242
+static void createclibstable 752,22129
+LUAMOD_API int luaopen_package 762,22491
+
+lobject.c,902
+#define lobject_c7,143
+#define LUA_CORE8,161
+LUAI_DDEF const TValue luaO_nilobject_ 31,457
+int luaO_int2fb 39,687
+int luaO_fb2int 51,896
+int luaO_ceillog2 58,1017
+static lua_Integer intarith 76,1735
+static lua_Number numarith 96,2498
+void luaO_arith 116,3144
+int luaO_hexavalue 156,4496
+static int isneg 162,4602
+#define MAXSIGDIG	181,5069
+static lua_Number lua_strx2number 187,5195
+static const char *l_str2d l_str2d239,7271
+static const char *l_str2int l_str2int253,7745
+size_t luaO_str2num 282,8506
+int luaO_utf8esc 297,8897
+#define MAXNUMBER2STR	316,9656
+void luaO_tostring 322,9728
+static void pushstr 341,10239
+const char *luaO_pushvfstring luaO_pushvfstring348,10484
+const char *luaO_pushfstring luaO_pushfstring416,12375
+#define LL(427,12640
+#define RETS	429,12684
+#define PRE	430,12703
+#define POS	431,12728
+#define addstr(433,12747
+void luaO_chunkid 435,12815
+
+lobject.h,3853
+#define lobject_h9,155
+#define LUA_TPROTO	22,272
+#define LUA_TDEADKEY	23,303
+#define LUA_TOTALTAGS	28,422
+#define VARBITS	38,634
+#define LUA_TLCL	49,809
+#define LUA_TLCF	50,872
+#define LUA_TCCL	51,940
+#define LUA_TSHRSTR	55,1034
+#define LUA_TLNGSTR	56,1100
+#define LUA_TNUMFLT	60,1198
+#define LUA_TNUMINT	61,1264
+#define BIT_ISCOLLECTABLE	65,1371
+#define ctb(68,1439
+typedef struct GCObject GCObject;74,1533
+#define CommonHeader	81,1672
+struct GCObject 87,1786
+typedef union Value Value;96,1859
+#define TValuefields	106,2011
+typedef struct lua_TValue TValue;108,2055
+#define NILCONSTANT	112,2124
+#define val_(115,2163
+#define rttype(119,2227
+#define novariant(122,2295
+#define ttype(125,2396
+#define ttnov(128,2488
+#define checktag(132,2556
+#define checktype(133,2598
+#define ttisnumber(134,2640
+#define ttisfloat(135,2691
+#define ttisinteger(136,2740
+#define ttisnil(137,2791
+#define ttisboolean(138,2835
+#define ttislightuserdata(139,2887
+#define ttisstring(140,2950
+#define ttisshrstring(141,3001
+#define ttislngstring(142,3058
+#define ttistable(143,3115
+#define ttisfunction(144,3168
+#define ttisclosure(145,3221
+#define ttisCclosure(146,3283
+#define ttisLclosure(147,3337
+#define ttislcf(148,3391
+#define ttisfulluserdata(149,3435
+#define ttisthread(150,3497
+#define ttisdeadkey(151,3552
+#define ivalue(155,3636
+#define fltvalue(156,3691
+#define nvalue(157,3746
+#define gcvalue(159,3846
+#define pvalue(160,3905
+#define tsvalue(161,3966
+#define uvalue(162,4030
+#define clvalue(163,4098
+#define clLvalue(164,4163
+#define clCvalue(165,4231
+#define fvalue(166,4299
+#define hvalue(167,4350
+#define bvalue(168,4411
+#define thvalue(169,4466
+#define deadvalue(171,4604
+#define l_isfalse(173,4678
+#define iscollectable(176,4752
+#define righttt(180,4843
+#define checkliveness(182,4899
+#define settt_(188,5046
+#define setfltvalue(190,5082
+#define setivalue(193,5177
+#define setnilvalue(196,5270
+#define setfvalue(198,5318
+#define setpvalue(201,5408
+#define setbvalue(204,5508
+#define setgcovalue(207,5602
+#define setsvalue(211,5730
+#define setuvalue(216,5893
+#define setthvalue(221,6061
+#define setclLvalue(226,6232
+#define setclCvalue(231,6400
+#define sethvalue(236,6568
+#define setdeadvalue(241,6733
+#define setobj(245,6788
+#define setobjs2s	255,7000
+#define setobj2s	257,7062
+#define setsvalue2s	258,7086
+#define sethvalue2s	259,7116
+#define setptvalue2s	260,7146
+#define setobjt2t	262,7209
+#define setobj2t	264,7249
+#define setobj2n	266,7293
+#define setsvalue2n	267,7317
+union Value 279,7501
+struct lua_TValue 289,7762
+typedef TValue *StkId;StkId294,7803
+typedef struct TString 303,7989
+} TString;309,8241
+typedef union UTString 315,8325
+} UTString;318,8431
+#define getaddrstr(325,8576
+#define getstr(326,8639
+#define svalue(330,8792
+typedef struct Udata 337,8959
+} Udata;343,9142
+typedef union UUdata 349,9224
+} UUdata;352,9331
+#define getudatamem(359,9464
+#define setuservalue(362,9560
+#define getuservalue(368,9715
+typedef struct Upvaldesc 377,9929
+} Upvaldesc;381,10144
+typedef struct LocVar 388,10256
+} LocVar;392,10416
+typedef struct Proto 398,10457
+} Proto;420,11338
+typedef struct UpVal UpVal;427,11372
+#define ClosureHeader 434,11421
+typedef struct CClosure 437,11497
+} CClosure;441,11604
+typedef struct LClosure 444,11618
+} LClosure;448,11724
+typedef union Closure 451,11738
+} Closure;454,11790
+#define isLfunction(457,11803
+#define getproto(459,11843
+typedef union TKey 466,11899
+} TKey;472,12028
+#define setnodekey(476,12100
+typedef struct Node 482,12276
+} Node;485,12328
+typedef struct Table 488,12338
+} Table;498,12715
+#define lmod(505,12797
+#define twoto(509,12886
+#define sizenode(510,12912
+#define luaO_nilobject	516,12998
+LUAI_DDEC const TValue luaO_nilobject_;519,13043
+#define UTF8BUFFSZ	522,13133
+
+lopcodes.c,191
+#define lopcodes_c7,135
+#define LUA_CORE8,154
+LUAI_DDEF const char *const luaP_opnames[luaP_opnames20,256
+#define opmode(72,854
+LUAI_DDEF const lu_byte luaP_opmodes[luaP_opmodes74,931
+
+lopcodes.h,2802
+#define lopcodes_h8,155
+enum OpMode 32,954
+enum OpMode {iABC,iABC32,954
+enum OpMode {iABC, iABx,32,954
+enum OpMode {iABC, iABx, iAsBx,32,954
+enum OpMode {iABC, iABx, iAsBx, iAx}iAx32,954
+#define SIZE_C	38,1074
+#define SIZE_B	39,1092
+#define SIZE_Bx	40,1110
+#define SIZE_A	41,1145
+#define SIZE_Ax	42,1163
+#define SIZE_OP	44,1208
+#define POS_OP	46,1228
+#define POS_A	47,1246
+#define POS_C	48,1280
+#define POS_B	49,1312
+#define POS_Bx	50,1344
+#define POS_Ax	51,1366
+#define MAXARG_Bx 60,1567
+#define MAXARG_sBx 61,1609
+#define MAXARG_Bx 63,1686
+#define MAXARG_sBx 64,1719
+#define MAXARG_Ax	68,1790
+#define MAXARG_Ax	70,1831
+#define MAXARG_A 74,1866
+#define MAXARG_B 75,1906
+#define MAXARG_C 76,1946
+#define MASK1(80,2041
+#define MASK0(83,2149
+#define GET_OPCODE(89,2246
+#define SET_OPCODE(90,2317
+#define getarg(93,2441
+#define setarg(94,2508
+#define GETARG_A(97,2636
+#define SETARG_A(98,2681
+#define GETARG_B(100,2732
+#define SETARG_B(101,2777
+#define GETARG_C(103,2828
+#define SETARG_C(104,2873
+#define GETARG_Bx(106,2924
+#define SETARG_Bx(107,2972
+#define GETARG_Ax(109,3026
+#define SETARG_Ax(110,3074
+#define GETARG_sBx(112,3128
+#define SETARG_sBx(113,3176
+#define CREATE_ABC(116,3252
+#define CREATE_ABx(121,3425
+#define CREATE_Ax(125,3562
+#define BITRK	134,3749
+#define ISK(137,3824
+#define INDEXK(140,3892
+#define MAXINDEXRK	142,3931
+#define RKASK(145,4005
+#define NO_REG	151,4084
+OP_MOVE,169,4469
+OP_LOADK,170,4504
+OP_LOADKX,171,4544
+OP_LOADBOOL,172,4589
+OP_LOADNIL,173,4644
+OP_GETUPVAL,174,4699
+OP_GETTABUP,176,4744
+OP_GETTABLE,177,4796
+OP_SETTABUP,179,4844
+OP_SETUPVAL,180,4897
+OP_SETTABLE,181,4941
+OP_NEWTABLE,183,4990
+OP_SELF,185,5042
+OP_ADD,187,5100
+OP_SUB,188,5144
+OP_MUL,189,5188
+OP_MOD,190,5232
+OP_POW,191,5276
+OP_DIV,192,5320
+OP_IDIV,193,5364
+OP_BAND,194,5410
+OP_BOR,195,5455
+OP_BXOR,196,5499
+OP_SHL,197,5544
+OP_SHR,198,5589
+OP_UNM,199,5634
+OP_BNOT,200,5669
+OP_NOT,201,5705
+OP_LEN,202,5742
+OP_CONCAT,204,5786
+OP_JMP,206,5837
+OP_EQ,207,5903
+OP_LT,208,5959
+OP_LE,209,6015
+OP_TEST,211,6072
+OP_TESTSET,212,6122
+OP_CALL,214,6190
+OP_TAILCALL,215,6261
+OP_RETURN,216,6321
+OP_FORLOOP,218,6380
+OP_FORPREP,220,6468
+OP_TFORCALL,222,6517
+OP_TFORLOOP,223,6586
+OP_SETLIST,225,6659
+OP_CLOSURE,227,6724
+OP_VARARG,229,6777
+OP_EXTRAARG/OP_EXTRAARG231,6836
+} OpCode;232,6900
+#define NUM_OPCODES	235,6912
+enum OpArgMask 272,8032
+  OpArgN,273,8049
+  OpArgU,274,8087
+  OpArgR,275,8121
+  OpArgK 276,8178
+LUAI_DDEC const lu_byte luaP_opmodes[luaP_opmodes279,8243
+#define getOpMode(281,8295
+#define getBMode(282,8357
+#define getCMode(283,8428
+#define testAMode(284,8499
+#define testTMode(285,8549
+LUAI_DDEC const char *const luaP_opnames[luaP_opnames288,8601
+#define LFIELDS_PER_FLUSH	292,8750
+
+loslib.c,1076
+#define loslib_c7,135
+#define LUA_LIB8,152
+#define LUA_STRFTIMEOPTIONS	31,492
+#define LUA_STRFTIMEOPTIONS 33,584
+#define l_timet	47,814
+#define l_pushtime(48,844
+#define l_checktime(49,905
+#define LUA_TMPNAMBUFSIZE	65,1171
+#define LUA_TMPNAMTEMPLATE	68,1234
+#define lua_tmpnam(71,1287
+#define LUA_TMPNAMBUFSIZE	80,1484
+#define lua_tmpnam(81,1519
+#define l_gmtime(97,1801
+#define l_localtime(98,1838
+#define l_gmtime(103,1924
+#define l_localtime(104,1978
+static int os_execute 112,2080
+static int os_remove 124,2342
+static int os_rename 130,2495
+static int os_tmpname 137,2699
+static int os_getenv 148,2926
+static int os_clock 154,3057
+static void setfield 168,3422
+static void setboolfield 173,3548
+static int getboolfield 180,3751
+static int getfield 188,3931
+static const char *checkoption checkoption202,4234
+static int os_date 226,5084
+static int os_time 272,6393
+static int os_difftime 299,7197
+static int os_setlocale 308,7421
+static int os_exit 320,7846
+static const luaL_Reg syslib[syslib333,8190
+LUAMOD_API int luaopen_os 352,8617
+
+lparser.c,3335
+#define lparser_c7,114
+#define LUA_CORE8,132
+#define MAXVARS	34,562
+#define hasmultret(37,585
+#define eqstr(42,756
+typedef struct BlockCnt 48,844
+} BlockCnt;55,1222
+static l_noret semerror 67,1400
+static l_noret error_expected 73,1558
+static l_noret errorlimit 79,1717
+static void checklimit 92,2168
+static int testnext 97,2283
+static void check 106,2411
+static void checknext 112,2508
+#define check_condition(118,2591
+static void check_match 122,2669
+static TString *str_checkname str_checkname135,3037
+static void init_exp 144,3180
+static void codestring 151,3292
+static void checkname 156,3404
+static int registerlocalvar 161,3499
+static void new_localvar 174,3949
+static void new_localvarliteral_ 186,4396
+#define new_localvarliteral(190,4528
+static LocVar *getlocvar getlocvar194,4626
+static void adjustlocalvars 201,4806
+static void removevars 210,5029
+static int searchupvalue 217,5221
+static int newupvalue 227,5439
+static int searchvar 242,6011
+static void markupval 256,6322
+static int singlevaraux 267,6584
+static void singlevar 293,7511
+static void adjust_assign 306,7969
+static void enterlevel 326,8545
+#define leavelevel(333,8691
+static void closegoto 336,8737
+static int findlabel 360,9466
+static int newlabelentry 380,10088
+static void findgotos 398,10568
+static void movegotosout 416,11047
+static void enterblock 434,11533
+static void breaklabel 449,11903
+static l_noret undefgoto 459,12238
+static void leaveblock 468,12554
+static Proto *addprototype addprototype494,13423
+static void codeclosure 516,14103
+static void open_func 523,14326
+static void close_func 546,14833
+static int block_follow 581,15954
+static void statlist 592,16183
+static void fieldsel 604,16432
+static void yindex 615,16690
+struct ConsControl 631,17057
+static void recfield 640,17328
+static void closelistfield 661,17914
+static void lastlistfield 672,18266
+static void listfield 687,18706
+static void field 696,18912
+static void constructor 718,19358
+static void parlist 747,20329
+static void body 776,21139
+static int explist 798,21710
+static void funcargs 811,21963
+static void primaryexp 865,23470
+static void suffixedexp 887,23916
+static void simpleexp 925,24829
+static UnOpr getunopr 980,26058
+static BinOpr getbinopr 991,26274
+} priority[priority1022,27147
+#define UNARY_PRIORITY	1035,27672
+static BinOpr subexpr 1042,27877
+static void expr 1072,28710
+static void block 1087,29041
+struct LHS_assign 1101,29291
+static void check_conflict 1113,29675
+static void assignment 1141,30752
+static int cond 1174,31794
+static void gotostat 1184,32013
+static void checkrepeated 1200,32434
+static void skipnoopstat 1214,32857
+static void labelstat 1220,32980
+static void whilestat 1238,33665
+static void repeatstat 1257,34156
+static int exp1 1277,34837
+static void forbody 1288,35010
+static void fornum 1314,35896
+static void forlist 1336,36532
+static void forstat 1361,37313
+static void test_then_block 1379,37932
+static void ifstat 1414,39244
+static void localfunc 1428,39804
+static void localstat 1439,40192
+static int funcname 1459,40590
+static void funcstat 1473,40870
+static void exprstat 1485,41207
+static void retstat 1501,41648
+static void statement 1534,42697
+static void mainfunc 1609,44682
+LClosure *luaY_parser luaY_parser1623,45088
+
+lparser.h,662
+#define lparser_h8,131
+  VVOID,20,259
+  VNIL,21,283
+  VTRUE,22,291
+  VFALSE,23,300
+  VK,24,310
+  VKFLT,25,355
+  VKINT,26,399
+  VNONRELOC,27,445
+  VLOCAL,28,487
+  VUPVAL,29,525
+  VINDEXED,30,585
+  VJMP,31,647
+  VRELOCABLE,32,684
+  VCALL,33,726
+  VVARARG	34,763
+} expkind;35,801
+#define vkisvar(38,814
+#define vkisinreg(39,868
+typedef struct expdesc 41,926
+} expdesc;55,1422
+typedef struct Vardesc 59,1478
+} Vardesc;61,1547
+typedef struct Labeldesc 65,1626
+} Labeldesc;70,1842
+typedef struct Labellist 74,1887
+} Labellist;78,2016
+typedef struct Dyndata 82,2075
+} Dyndata;90,2298
+typedef struct FuncState 98,2439
+} FuncState;113,3187
+
+lprefix.h,191
+#define lprefix_h8,188
+#define _XOPEN_SOURCE 17,303
+#undef _XOPEN_SOURCE 19,364
+#define _LARGEFILE_SOURCE 26,569
+#define _FILE_OFFSET_BITS 27,603
+#define _CRT_SECURE_NO_WARNINGS 39,757
+
+lstate.c,841
+#define lstate_c7,115
+#define LUA_CORE8,132
+#define LUAI_GCPAUSE	32,466
+#define LUAI_GCMUL	36,536
+#define MEMERRMSG	40,621
+#define luai_makeseed(49,835
+typedef struct LX 57,937
+} LX;60,1006
+typedef struct LG 66,1080
+} LG;69,1126
+#define fromstate(73,1135
+#define addbuff(80,1351
+static unsigned int makeseed 84,1466
+void luaE_setdebt 101,1958
+CallInfo *luaE_extendCI luaE_extendCI107,2071
+void luaE_freeCI 120,2328
+void luaE_shrinkCI 134,2586
+static void stack_init 147,2945
+static void freestack 167,3574
+static void init_registry 179,3891
+static void f_luaopen 198,4580
+static void preinit_thread 219,5198
+static void close_state 239,5595
+LUA_API lua_State *lua_newthread lua_newthread253,6096
+void luaE_freethread 283,6897
+LUA_API lua_State *lua_newstate lua_newstate293,7152
+LUA_API void lua_close 340,8394
+
+lstate.h,941
+#define lstate_h8,132
+#define EXTRA_STACK 38,866
+#define BASIC_STACK_SIZE 41,892
+#define KGC_NORMAL	45,977
+#define KGC_EMERGENCY	46,998
+typedef struct stringtable 49,1069
+} stringtable;53,1166
+typedef struct CallInfo 65,1592
+} CallInfo;83,2236
+#define CIST_OAH	89,2283
+#define CIST_LUA	90,2343
+#define CIST_HOOKED	91,2404
+#define CIST_REENTRY	92,2466
+#define CIST_YPCALL	94,2603
+#define CIST_TAIL	95,2671
+#define CIST_HOOKYIELD	96,2723
+#define isLua(98,2785
+#define setoah(101,2903
+#define getoah(102,2958
+typedef struct global_State 108,3058
+} global_State;143,5027
+struct lua_State 149,5073
+#define G(175,5993
+union GCUnion 181,6082
+#define cast_u(192,6271
+#define gco2ts(195,6374
+#define gco2u(197,6461
+#define gco2lcl(198,6534
+#define gco2ccl(199,6607
+#define gco2cl(200,6680
+#define gco2t(202,6769
+#define gco2p(203,6839
+#define gco2th(204,6909
+#define obj2gco(208,7036
+#define gettotalbytes(213,7170
+
+lstring.c,418
+#define lstring_c7,150
+#define LUA_CORE8,168
+#define LUAI_HASHLIMIT	31,490
+int luaS_eqlngstr 38,560
+unsigned int luaS_hash 47,862
+void luaS_resize 60,1184
+static TString *createstrobj createstrobj92,2144
+void luaS_remove 109,2602
+static TString *internshrstr internshrstr122,2958
+TString *luaS_newlstr luaS_newlstr151,3812
+TString *luaS_new luaS_new165,4159
+Udata *luaS_newudata luaS_newudata170,4259
+
+lstring.h,216
+#define lstring_h8,167
+#define sizelstring(15,246
+#define sizestring(16,322
+#define sizeludata(18,367
+#define sizeudata(19,418
+#define luaS_newliteral(21,461
+#define isreserved(28,630
+#define eqshrstr(34,764
+
+lstrlib.c,3002
+#define lstrlib_c7,163
+#define LUA_LIB8,181
+#define LUA_MAXCAPTURES	31,542
+#define uchar(36,615
+#define MAXSIZE 43,806
+static int str_len 49,896
+static lua_Integer posrelat 58,1102
+static int str_sub 65,1281
+static int str_reverse 79,1694
+static int str_lower 91,1951
+static int str_upper 104,2219
+static int str_rep 117,2487
+static int str_byte 143,3387
+static int str_char 162,4018
+static int writer 177,4381
+static int str_dump 184,4541
+#define CAP_UNFINISHED	205,5000
+#define CAP_POSITION	206,5028
+typedef struct MatchState 209,5056
+} MatchState;220,5494
+#define MAXCCALLS	229,5676
+#define L_ESC	233,5707
+#define SPECIALS	234,5726
+static int check_capture 237,5758
+static int capture_to_close 245,5975
+static const char *classend classend253,6205
+static int match_class 277,6774
+static int matchbracketclass 297,7391
+static int singlematch 320,7859
+static const char *matchbalance matchbalance336,8274
+static const char *max_expand max_expand356,8774
+static const char *min_expand min_expand371,9246
+static const char *start_capture start_capture384,9585
+static const char *end_capture end_capture398,10029
+static const char *match_capture match_capture409,10402
+static const char *match match420,10676
+static const char *lmemfind lmemfind523,14355
+static void push_onecapture 545,15117
+static int push_captures 564,15743
+static int nospecials 575,16111
+static int str_find_aux 586,16412
+static int str_find 638,17906
+static int str_match 643,17976
+static int gmatch_aux 648,18047
+static int gmatch 677,18870
+static void add_s 687,19056
+static void add_value 715,19941
+static int str_gsub 746,20765
+#define MAX_ITEM	801,22263
+#define FLAGS	804,22329
+#define MAX_FORMAT	810,22501
+static void addquoted 813,22547
+static const char *scanformat scanformat837,23148
+static void addlenmod 862,23965
+static int str_format 872,24192
+#define LUA_PACKPADBYTE	956,26684
+#define MAXINTSIZE	960,26785
+#define NB	963,26844
+#define MC	966,26903
+#define SZINT	969,26959
+} nativeendian 976,27135
+struct cD 980,27218
+#define MAXALIGN	985,27307
+typedef union Ftypes 991,27389
+} Ftypes;996,27521
+typedef struct Header 1002,27575
+} Header;1006,27647
+typedef enum KOption 1012,27692
+  Kint,1013,27715
+  Kuint,1014,27746
+  Kfloat,1015,27779
+  Kchar,1016,27818
+  Kstring,1017,27854
+  Kzstr,1018,27900
+  Kpadding,1019,27939
+  Kpaddalign,1020,27965
+  Knop	1021,28007
+} KOption;1022,28053
+static int digit 1029,28158
+static int getnum 1031,28217
+static int getnumlimit 1048,28605
+static void initheader 1060,28876
+static KOption getoption 1070,29076
+static KOption getdetails 1117,31003
+static void packint 1144,32130
+static void copywithendian 1165,32843
+static int str_pack 1179,33160
+static int str_packsize 1263,36368
+static lua_Integer unpackint 1296,37509
+static int str_unpack 1322,38438
+static const luaL_Reg strlib[strlib1388,40570
+static void createmetatable 1410,41021
+LUAMOD_API int luaopen_string 1425,41522
+
+ltable.c,1413
+#define ltable_c7,120
+#define LUA_CORE8,137
+#define MAXABITS	48,1279
+#define MAXASIZE	49,1333
+#define MAXHBITS	57,1625
+#define hashpow2(60,1659
+#define hashstr(62,1718
+#define hashboolean(63,1767
+#define hashint(64,1807
+#define hashmod(71,1956
+#define hashpointer(74,2019
+#define dummynode	77,2071
+#define isdummy(79,2105
+static const Node dummynode_ 81,2145
+static int numisinteger 91,2355
+static Node *hashfloat hashfloat101,2585
+static Node *mainposition mainposition119,3045
+static unsigned int arrayindex 151,3962
+static unsigned int findindex 166,4449
+int luaH_next 193,5395
+static unsigned int computesizes 225,6459
+static int countint 247,7229
+static unsigned int numusearray 258,7481
+static int numusehash 284,8217
+static void setarrayvector 301,8652
+static void setnodevector 310,8901
+void luaH_resize 335,9572
+void luaH_resizearray 370,10791
+static void rehash 378,11015
+Table *luaH_new luaH_new403,11749
+void luaH_free 415,11996
+static Node *getfreepos getfreepos423,12190
+TValue *luaH_newkey luaH_newkey441,12755
+const TValue *luaH_getint luaH_getint497,14717
+const TValue *luaH_getstr luaH_getstr520,15272
+const TValue *luaH_get luaH_get540,15730
+TValue *luaH_set luaH_set572,16654
+void luaH_setint 580,16854
+static int unbound_search 594,17161
+int luaH_getn 622,17953
+Node *luaH_mainposition luaH_mainposition644,18500
+int luaH_isdummy 648,18596
+
+ltable.h,192
+#define ltable_h8,136
+#define gnode(13,177
+#define gval(14,212
+#define gnext(15,243
+#define gkey(19,352
+#define wgkey(21,409
+#define invalidateTMcache(23,445
+#define keyfromval(27,549
+
+ltablib.c,544
+#define ltablib_c7,133
+#define LUA_LIB8,151
+} TabA;29,467
+static void checktab 36,625
+#define aux_getn(55,1309
+static int maxn 59,1402
+static int tinsert 76,1765
+static int tremove 104,2590
+static int tmove 121,3105
+static void addfield 156,4219
+static int tconcat 165,4492
+static int pack 192,5157
+static int unpack 205,5554
+static void set2 236,6419
+static int sort_comp 241,6528
+static void auxsort 256,6950
+static int sort 319,9017
+static const luaL_Reg tab_funcs[tab_funcs333,9436
+LUAMOD_API int luaopen_table 348,9694
+
+ltm.c,403
+#define ltm_c7,110
+#define LUA_CORE8,124
+static const char udatatypename[udatatypename27,360
+LUAI_DDEF const char *const luaT_typenames_[luaT_typenames_29,409
+void luaT_init 37,648
+const TValue *luaT_gettm luaT_gettm59,1268
+const TValue *luaT_gettmbyobj luaT_gettmbyobj70,1569
+void luaT_callTM 86,1939
+int luaT_callbinTM 103,2636
+void luaT_trybinTM 114,2995
+int luaT_callorderTM 136,3665
+
+ltm.h,638
+#define ltm_h8,124
+  TM_INDEX,19,273
+  TM_NEWINDEX,20,285
+  TM_GC,21,300
+  TM_MODE,22,309
+  TM_LEN,23,320
+  TM_EQ,24,330
+  TM_ADD,25,379
+  TM_SUB,26,389
+  TM_MUL,27,399
+  TM_MOD,28,409
+  TM_POW,29,419
+  TM_DIV,30,429
+  TM_IDIV,31,439
+  TM_BAND,32,450
+  TM_BOR,33,461
+  TM_BXOR,34,471
+  TM_SHL,35,482
+  TM_SHR,36,492
+  TM_UNM,37,502
+  TM_BNOT,38,512
+  TM_LT,39,523
+  TM_LE,40,532
+  TM_CONCAT,41,541
+  TM_CALL,42,554
+  TM_N	43,565
+} TMS;44,610
+#define gfasttm(48,620
+#define fasttm(51,742
+#define ttypename(53,787
+#define objtypename(54,833
+LUAI_DDEC const char *const luaT_typenames_[luaT_typenames_56,877
+
+lua.c,1635
+#define lua_c7,127
+#define LUA_PROMPT	24,331
+#define LUA_PROMPT2	25,356
+#define LUA_PROGNAME	29,418
+#define LUA_MAXINPUT	33,481
+#define LUA_INIT_VAR	37,542
+#define LUA_INITVARVERSION 40,583
+#define lua_stdin_is_tty(53,896
+#define lua_stdin_is_tty(58,991
+#define lua_stdin_is_tty(63,1085
+#define lua_readline(82,1550
+#define lua_saveline(83,1615
+#define lua_freeline(86,1775
+#define lua_readline(90,1840
+#define lua_saveline(93,2006
+#define lua_freeline(94,2058
+static lua_State *globalL globalL103,2148
+static const char *progname progname105,2183
+static void lstop 111,2291
+static void laction 124,2680
+static void print_usage 130,2865
+static void l_message 155,3676
+static int report 166,4038
+static int msghandler 179,4298
+static int docall 198,4991
+static void print_version 212,5536
+static void createargtable 226,6057
+static int dochunk 239,6446
+static int dofile 245,6576
+static int dostring 250,6678
+static int dolibrary 259,6911
+static const char *get_prompt get_prompt273,7287
+#define EOFMARK	282,7580
+#define marklen	283,7605
+static int incomplete 291,7818
+static int pushline 307,8192
+static int addreturn 332,9003
+static int multiline 350,9538
+static int loadline 370,10324
+static void l_print 387,10830
+static void doREPL 404,11351
+static int pushargs 423,11846
+static int handle_script 436,12198
+#define has_error	452,12639
+#define has_i	453,12676
+#define has_v	454,12702
+#define has_e	455,12728
+#define has_E	456,12754
+static int collectargs 464,13062
+static int runargs 513,14641
+static int handle_luainit 534,15227
+static int pmain 553,15728
+int main 595,17335
+
+lua.h,3548
+#define lua_h10,205
+#define LUA_VERSION_MAJOR	19,285
+#define LUA_VERSION_MINOR	20,315
+#define LUA_VERSION_NUM	21,345
+#define LUA_VERSION_RELEASE	22,374
+#define LUA_VERSION	24,407
+#define LUA_RELEASE	25,474
+#define LUA_COPYRIGHT	26,530
+#define LUA_AUTHORS	27,609
+#define LUA_SIGNATURE	31,726
+#define LUA_MULTRET	34,823
+#define LUA_REGISTRYINDEX	40,874
+#define lua_upvalueindex(41,920
+#define LUA_OK	45,996
+#define LUA_YIELD	46,1014
+#define LUA_ERRRUN	47,1034
+#define LUA_ERRSYNTAX	48,1055
+#define LUA_ERRMEM	49,1079
+#define LUA_ERRGCMM	50,1100
+#define LUA_ERRERR	51,1122
+typedef struct lua_State lua_State;54,1145
+#define LUA_TNONE	60,1204
+#define LUA_TNIL	62,1229
+#define LUA_TBOOLEAN	63,1249
+#define LUA_TLIGHTUSERDATA	64,1273
+#define LUA_TNUMBER	65,1302
+#define LUA_TSTRING	66,1325
+#define LUA_TTABLE	67,1348
+#define LUA_TFUNCTION	68,1370
+#define LUA_TUSERDATA	69,1395
+#define LUA_TTHREAD	70,1420
+#define LUA_NUMTAGS	72,1444
+#define LUA_MINSTACK	77,1520
+#define LUA_RIDX_MAINTHREAD	81,1586
+#define LUA_RIDX_GLOBALS	82,1616
+#define LUA_RIDX_LAST	83,1643
+typedef LUA_NUMBER lua_Number;87,1714
+typedef LUA_INTEGER lua_Integer;91,1780
+typedef LUA_UNSIGNED lua_Unsigned;94,1842
+typedef LUA_KCONTEXT lua_KContext;97,1924
+typedef int (*lua_CFunction)lua_CFunction103,2011
+typedef int (*lua_KFunction)lua_KFunction108,2098
+typedef const char * (*lua_Reader)lua_Reader114,2258
+typedef int (*lua_Writer)lua_Writer116,2332
+typedef void * (*lua_Alloc)lua_Alloc122,2458
+#define LUA_OPADD	194,4651
+#define LUA_OPSUB	195,4696
+#define LUA_OPMUL	196,4716
+#define LUA_OPMOD	197,4736
+#define LUA_OPPOW	198,4756
+#define LUA_OPDIV	199,4776
+#define LUA_OPIDIV	200,4796
+#define LUA_OPBAND	201,4817
+#define LUA_OPBOR	202,4838
+#define LUA_OPBXOR	203,4858
+#define LUA_OPSHL	204,4879
+#define LUA_OPSHR	205,4900
+#define LUA_OPUNM	206,4921
+#define LUA_OPBNOT	207,4942
+#define LUA_OPEQ	211,5016
+#define LUA_OPLT	212,5035
+#define LUA_OPLE	213,5054
+#define lua_call(272,7547
+#define lua_pcall(276,7749
+#define lua_yield(293,8357
+#define LUA_GCSTOP	300,8461
+#define LUA_GCRESTART	301,8483
+#define LUA_GCCOLLECT	302,8508
+#define LUA_GCCOUNT	303,8533
+#define LUA_GCCOUNTB	304,8556
+#define LUA_GCSTEP	305,8580
+#define LUA_GCSETPAUSE	306,8602
+#define LUA_GCSETSTEPMUL	307,8628
+#define LUA_GCISRUNNING	308,8655
+#define lua_getextraspace(337,9343
+#define lua_tonumber(339,9414
+#define lua_tointeger(340,9466
+#define lua_pop(342,9521
+#define lua_newtable(344,9566
+#define lua_register(346,9617
+#define lua_pushcfunction(348,9697
+#define lua_isfunction(350,9757
+#define lua_istable(351,9821
+#define lua_islightuserdata(352,9879
+#define lua_isnil(353,9953
+#define lua_isboolean(354,10008
+#define lua_isthread(355,10070
+#define lua_isnone(356,10130
+#define lua_isnoneornil(357,10187
+#define lua_pushliteral(359,10242
+#define lua_pushglobaltable(362,10329
+#define lua_tostring(365,10417
+#define lua_insert(368,10473
+#define lua_remove(370,10524
+#define lua_replace(372,10593
+#define lua_pushunsigned(384,10959
+#define lua_tounsignedx(385,11026
+#define lua_tounsigned(386,11097
+#define LUA_HOOKCALL	401,11424
+#define LUA_HOOKRET	402,11447
+#define LUA_HOOKLINE	403,11469
+#define LUA_HOOKCOUNT	404,11492
+#define LUA_HOOKTAILCALL 405,11516
+#define LUA_MASKCALL	411,11566
+#define LUA_MASKRET	412,11607
+#define LUA_MASKLINE	413,11646
+#define LUA_MASKCOUNT	414,11687
+typedef struct lua_Debug lua_Debug;416,11731
+typedef void (*lua_Hook)lua_Hook420,11858
+struct lua_Debug 440,12787
+
+luac.c,1005
+#define luac_c7,157
+#define LUA_CORE8,172
+#define luaU_print	26,465
+#define PROGNAME	28,499
+#define OUTPUT	29,551
+static int listing=31,610
+static int dumping=32,656
+static int stripping=33,702
+static char Output[Output34,759
+static const char* output=35,823
+static const char* progname=36,887
+static void fatal(38,952
+static void cannot(44,1063
+static void usage(50,1206
+#define IS(70,1835
+static int doargs(72,1873
+#define FUNCTION 120,2924
+static const char* reader(122,2963
+#define toproto(137,3155
+static const Proto* combine(139,3198
+static int writer(159,3584
+static int pmain(165,3723
+int main(192,4384
+#define luac_c217,4946
+#define LUA_CORE218,4961
+#define VOID(224,5043
+static void PrintString(226,5080
+static void PrintConstant(254,5702
+#define UPVALNAME(285,6299
+#define MYK(286,6380
+static void PrintCode(288,6406
+#define SS(392,8818
+#define S(393,8848
+static void PrintHeader(395,8877
+static void PrintDebug(415,9487
+static void PrintFunction(442,10078
+
+luaconf.h,4087
+#define luaconf_h9,149
+#define LUA_USE_WINDOWS 51,1346
+#define LUA_DL_DLL	56,1450
+#define LUA_USE_C89	57,1498
+#define LUA_USE_POSIX62,1584
+#define LUA_USE_DLOPEN	63,1606
+#define LUA_USE_READLINE	64,1665
+#define LUA_USE_POSIX69,1760
+#define LUA_USE_DLOPEN	70,1782
+#define LUA_USE_READLINE	71,1837
+#define LUA_C89_NUMBERS81,2146
+#define LUAI_BITSINT	91,2314
+#define LUAI_BITSINT	94,2390
+#define LUA_INT_INT115,3071
+#define LUA_INT_LONG117,3125
+#define LUA_REAL_FLOAT119,3153
+#define LUA_INT_LONG125,3280
+#define LUA_REAL_DOUBLE126,3301
+#define LUA_INT_LONGLONG132,3417
+#define LUA_REAL_DOUBLE133,3442
+#define LUA_VDIR	157,4072
+#define LUA_LDIR	163,4309
+#define LUA_CDIR	164,4337
+#define LUA_SHRDIR	165,4360
+#define LUA_PATH_DEFAULT 166,4415
+#define LUA_CPATH_DEFAULT 171,4612
+#define LUA_ROOT	178,4765
+#define LUA_LDIR	179,4796
+#define LUA_CDIR	180,4848
+#define LUA_PATH_DEFAULT 181,4898
+#define LUA_CPATH_DEFAULT 185,5042
+#define LUA_DIRSEP	196,5360
+#define LUA_DIRSEP	198,5390
+#define LUA_API 222,6213
+#define LUA_API 224,6271
+#define LUA_API	229,6349
+#define LUALIB_API	235,6455
+#define LUAMOD_API	236,6482
+#define LUAI_FUNC	255,7341
+#define LUAI_FUNC	257,7422
+#define LUAI_DDEC	260,7466
+#define LUAI_DDEF	261,7494
+#define LUA_COMPAT_MATHLIB284,8190
+#define LUA_COMPAT_BITLIB289,8287
+#define LUA_COMPAT_IPAIRS294,8396
+#define LUA_COMPAT_APIINTCASTS301,8602
+#define LUA_COMPAT_UNPACK321,9054
+#define LUA_COMPAT_LOADERS327,9207
+#define lua_cpcall(333,9371
+#define LUA_COMPAT_LOG10343,9612
+#define LUA_COMPAT_LOADSTRING349,9773
+#define LUA_COMPAT_MAXN354,9879
+#define lua_strlen(361,10074
+#define lua_objlen(363,10119
+#define lua_equal(365,10164
+#define lua_lessthan(366,10234
+#define LUA_COMPAT_MODULE372,10431
+#define LUA_NUMBER	405,11343
+#define LUAI_UACNUMBER	407,11369
+#define LUA_NUMBER_FRMLEN	409,11400
+#define LUA_NUMBER_FMT	410,11429
+#define l_mathop(412,11461
+#define lua_str2number(414,11490
+#define LUA_NUMBER	419,11594
+#define LUAI_UACNUMBER	421,11626
+#define LUA_NUMBER_FRMLEN	423,11662
+#define LUA_NUMBER_FMT	424,11692
+#define l_mathop(426,11726
+#define lua_str2number(428,11755
+#define LUA_NUMBER	432,11851
+#define LUAI_UACNUMBER	434,11878
+#define LUA_NUMBER_FRMLEN	436,11909
+#define LUA_NUMBER_FMT	437,11938
+#define l_mathop(439,11971
+#define lua_str2number(441,11997
+#define l_floor(450,12124
+#define lua_number2str(452,12166
+#define lua_numbertointeger(463,12650
+#define luai_numidiv(479,13102
+#define luai_nummod(488,13536
+#define luai_numpow(492,13652
+#define luai_numadd(498,13782
+#define luai_numsub(499,13819
+#define luai_nummul(500,13856
+#define luai_numdiv(501,13893
+#define luai_numunm(502,13930
+#define luai_numeq(503,13962
+#define luai_numlt(504,13998
+#define luai_numle(505,14033
+#define luai_numisnan(506,14069
+#define LUA_INTEGER_FMT	527,14691
+#define lua_integer2str(528,14743
+#define LUAI_UACINT	530,14808
+#define LUA_UNSIGNED	536,14982
+#define LUA_INTEGER	543,15102
+#define LUA_INTEGER_FRMLEN	544,15127
+#define LUA_MAXINTEGER	546,15158
+#define LUA_MININTEGER	547,15190
+#define LUA_INTEGER	551,15266
+#define LUA_INTEGER_FRMLEN	552,15292
+#define LUA_MAXINTEGER	554,15324
+#define LUA_MININTEGER	555,15357
+#define LUA_INTEGER	562,15500
+#define LUA_INTEGER_FRMLEN	563,15531
+#define LUA_MAXINTEGER	565,15564
+#define LUA_MININTEGER	566,15598
+#define LUA_INTEGER	571,15723
+#define LUA_INTEGER_FRMLEN	572,15752
+#define LUA_MAXINTEGER	574,15786
+#define LUA_MININTEGER	575,15819
+#define lua_strx2number(606,16609
+#define LUA_USE_AFORMAT616,16910
+#undef l_mathop 627,17265
+#undef lua_str2number628,17311
+#define l_mathop(629,17333
+#define lua_str2number(630,17388
+#define LUA_KCONTEXT	640,17693
+#undef LUA_KCONTEXT646,17903
+#define LUA_KCONTEXT	647,17923
+#define LUAI_MAXSTACK	669,18664
+#define LUAI_MAXSTACK	671,18701
+#define LUAI_FIRSTPSEUDOIDX	675,18782
+#define LUA_EXTRASPACE	683,18995
+#define LUA_IDSIZE	691,19197
+#define LUAI_MAXSHORTLEN 700,19482
+#define LUAL_BUFFERSIZE	707,19646
+#define LUA_QL(717,19951
+#define LUA_QS	718,19979
+
+lualib.h,360
+#define lualib_h9,142
+#define LUA_COLIBNAME	17,227
+#define LUA_TABLIBNAME	20,313
+#define LUA_IOLIBNAME	23,392
+#define LUA_OSLIBNAME	26,464
+#define LUA_STRLIBNAME	29,536
+#define LUA_UTF8LIBNAME	32,617
+#define LUA_BITLIBNAME	35,695
+#define LUA_MATHLIBNAME	38,774
+#define LUA_DBLIBNAME	41,852
+#define LUA_LOADLIBNAME	44,930
+#define lua_assert(54,1125
+
+lundump.c,772
+#define lundump_c7,130
+#define LUA_CORE8,148
+#define luai_verifycode(28,415
+} LoadState;37,545
+static l_noret error(40,560
+#define LoadVector(50,835
+static void LoadBlock 52,896
+#define LoadVar(58,1025
+static lu_byte LoadByte 61,1068
+static int LoadInt 68,1155
+static lua_Number LoadNumber 75,1233
+static lua_Integer LoadInteger 82,1328
+static TString *LoadString LoadString89,1426
+static void LoadCode 103,1710
+static void LoadConstants 114,1952
+static void LoadProtos 148,2657
+static void LoadUpvalues 162,2955
+static void LoadDebug 176,3286
+static void LoadFunction 198,3857
+static void checkliteral 215,4326
+static void fchecksize 224,4589
+#define checksize(230,4760
+static void checkHeader 232,4811
+LClosure *luaU_undump(luaU_undump254,5432
+
+lundump.h,179
+#define lundump_h8,148
+#define LUAC_DATA	16,267
+#define LUAC_INT	18,307
+#define LUAC_NUM	19,331
+#define MYINT(21,365
+#define LUAC_VERSION	22,393
+#define LUAC_FORMAT	23,469
+
+lutf8lib.c,510
+#define lutf8lib_c7,143
+#define LUA_LIB8,162
+#define MAXUNICODE	22,323
+#define iscont(24,352
+static lua_Integer u_posrelat 29,487
+static const char *utf8_decode utf8_decode39,748
+static int utflen 70,1934
+static int codepoint 99,2828
+static void pushutfchar 127,3697
+static int utfchar 137,3975
+static int byteoffset 159,4464
+static int iter_aux 200,5702
+static int iter_codes 224,6362
+#define UTF8PATT	234,6573
+static struct luaL_Reg funcs[funcs237,6625
+LUAMOD_API int luaopen_utf8 249,6845
+
+lvm.c,1136
+#define lvm_c7,119
+#define LUA_CORE8,133
+#define LUA_FLOORN2I	39,676
+#define MAXTAGLOOP	44,766
+static int tofloat 51,934
+int luaV_tonumber_ 69,1345
+static int tointeger_aux 91,1970
+int luaV_tointeger_ 120,2776
+static int forlimit 140,3656
+void luaV_gettable 164,4409
+void luaV_settable 194,5469
+static int l_strcmp 240,7326
+int luaV_lessthan 266,8177
+int luaV_lessequal 284,8813
+int luaV_equalobj 305,9592
+#define tostring(354,11543
+void luaV_concat 361,11754
+void luaV_objlen 404,13321
+lua_Integer luaV_div 435,14215
+lua_Integer luaV_mod 455,14869
+#define NBITS	471,15369
+lua_Integer luaV_shiftl 476,15488
+static LClosure *getcached getcached493,15926
+static void pushclosure 515,16697
+void luaV_finishOp 539,17557
+#define luai_runtimecheck(611,20084
+#define RA(615,20137
+#define RB(617,20221
+#define RC(618,20298
+#define RKB(619,20375
+#define RKC(621,20499
+#define KBx(623,20623
+#define dojump(628,20755
+#define donextjump(634,20980
+#define Protect(637,21049
+#define checkGC(639,21100
+#define vmdispatch(646,21339
+#define vmcase(647,21371
+#define vmbreak	648,21397
+void luaV_execute 650,21421
+
+lvm.h,222
+#define lvm_h8,132
+#define cvt2str(17,232
+#define cvt2str(19,271
+#define cvt2num(24,372
+#define cvt2num(26,411
+#define tonumber(30,485
+#define tointeger(33,574
+#define intop(36,665
+#define luaV_rawequalobj(38,732
+
+lzio.c,159
+#define lzio_c7,116
+#define LUA_CORE8,131
+int luaZ_fill 23,290
+void luaZ_init 38,599
+size_t luaZ_read 48,832
+char *luaZ_openspace luaZ_openspace70,1440
+
+lzio.h,415
+#define lzio_h9,132
+#define EOZ	16,186
+typedef struct Zio ZIO;18,226
+#define zgetc(20,251
+typedef struct Mbuffer 23,326
+} Mbuffer;27,398
+#define luaZ_initbuffer(29,410
+#define luaZ_buffer(31,490
+#define luaZ_sizebuffer(32,533
+#define luaZ_bufflen(33,582
+#define luaZ_buffremove(35,622
+#define luaZ_resetbuffer(36,673
+#define luaZ_resizebuffer(39,722
+#define luaZ_freebuffer(44,881
+struct Zio 56,1270
+
+lua.hpp,0
