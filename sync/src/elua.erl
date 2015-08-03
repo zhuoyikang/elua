@@ -3,54 +3,68 @@
 
 -export([
          luafile/1,
-         new_state/1,
+         newstate/0,
+         dofile/2,
          getglobal/2,
          pushstring/2,
-         call/3
+         call/3,
+         gencall/4,
+         gencast/4
         ]).
 
--define(APPNAME, elua).
--define(LIBNAME, elua).
--define(LUANAME, lua).
+-define(APPNAME,elua).
+-define(LIBNAME,elua).
+-define(LUANAME,lua).
 
 luafile(FileName) ->
   case code:priv_dir(?APPNAME) of
-    {error, bad_name} ->
-      case filelib:is_dir(filename:join(["..", ?LUANAME])) of
+    {error,bad_name} ->
+      case filelib:is_dir(filename:join(["..",?LUANAME])) of
         true ->
-          filename:join(["..", ?LUANAME, FileName]);
+          filename:join(["..",?LUANAME,FileName]);
         _ ->
-          filename:join([?LUANAME, FileName])
+          filename:join([?LUANAME,FileName])
       end;
     Dir ->
-      filename:join(Dir, ?LUANAME, FileName)
+      filename:join(Dir,?LUANAME,FileName)
   end.
 
 init() ->
-  SoName = case code:priv_dir(?APPNAME) of
-             {error, bad_name} ->
-               case filelib:is_dir(filename:join(["..", priv])) of
+  SoName=case code:priv_dir(?APPNAME) of
+             {error,bad_name} ->
+               case filelib:is_dir(filename:join(["..",priv])) of
                  true ->
-                   filename:join(["..", priv, ?LIBNAME]);
+                   filename:join(["..",priv,?LIBNAME]);
                  _ ->
-                   filename:join([priv, ?LIBNAME])
+                   filename:join([priv,?LIBNAME])
                end;
              Dir ->
-               filename:join(Dir, ?LIBNAME)
+               filename:join(Dir,?LIBNAME)
            end,
-  erlang:load_nif(SoName, 0).
+  erlang:load_nif(SoName,0).
 
 not_loaded(Line) ->
-  exit({not_loaded, [{module, ?MODULE}, {line, Line}]}).
+  exit({not_loaded,[{module,?MODULE},{line,Line}]}).
 
-new_state(_File) ->
+%% some lua api
+newstate() ->
   not_loaded(?LINE).
-
-getglobal(_L, _Key) ->
+dofile(_L,_FilePath) ->
   not_loaded(?LINE).
-
+getglobal(_L,_Key) ->
+  not_loaded(?LINE).
 pushstring(_L,_String) ->
   not_loaded(?LINE).
+call(_L,_InArgs,_OutArgs) ->
+  not_loaded(?LINE).
 
-call(_L, _InArgs, _OutArgs) ->
+%% general call call lua function and get the result
+%% format:  isb:i
+%% input args is [int string binary]
+%% output args is [int]
+gencall(_L,_Func,_Format,_InArgs) ->
+  not_loaded(?LINE).
+
+%% general cast call lua function and ignore the result
+gencast(_L,_Func,_Format,_InArgs) ->
   not_loaded(?LINE).
