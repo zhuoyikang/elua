@@ -2,7 +2,6 @@
 -on_load(init/0).
 
 -export([
-         luafile/1,
          newstate/0,
          dofile/2,
          getglobal/2,
@@ -16,18 +15,6 @@
 -define(LIBNAME,elua).
 -define(LUANAME,lua).
 
-luafile(FileName) ->
-  case code:priv_dir(?APPNAME) of
-    {error,bad_name} ->
-      case filelib:is_dir(filename:join(["..",?LUANAME])) of
-        true ->
-          filename:join(["..",?LUANAME,FileName]);
-        _ ->
-          filename:join([?LUANAME,FileName])
-      end;
-    Dir ->
-      filename:join(Dir,?LUANAME,FileName)
-  end.
 
 init() ->
   SoName=case code:priv_dir(?APPNAME) of
