@@ -125,3 +125,10 @@ gen_call_times_test() ->
                 end,
                 lists:seq(1,1000000)),
   ok.
+
+
+binary_test() ->
+  LuaPath=elua:luafile("pack_test.lua"),
+  {ok,L}=elua:newstate(),
+  ok=elua:dofile(L,LuaPath),
+  ok.

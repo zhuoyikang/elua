@@ -1,10 +1,11 @@
 #include "erl_nif.h"
-#include "lua/src/lua.h"
-#include "lua/src/lauxlib.h"
-#include "lua/src/lualib.h"
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+// #include "epack.h"
 
 ErlNifResourceType* RES_SYNC;
 ERL_NIF_TERM atom_ok;
@@ -68,6 +69,7 @@ sync_newstate(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     }
 
     luaL_openlibs(L);
+    // luaopen_pack(L);
 
     res = enif_alloc_resource(RES_SYNC, sizeof(elua_t));
     if(res == NULL) return enif_make_badarg(env);
