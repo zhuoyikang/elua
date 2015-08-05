@@ -111,9 +111,9 @@ make_error_tuple(ErlNifEnv *env, const char *reason)
 
 
 static ERL_NIF_TERM
-dofile(ErlNifEnv *env, worker_t *w, lua_State *L, const ERL_NIF_TERM arg);
+dofile(ErlNifEnv *env, lua_State *L, const ERL_NIF_TERM arg);
 static ERL_NIF_TERM
-gencall(ErlNifEnv *env, worker_t *w, lua_State *L,
+gencall(ErlNifEnv *env, lua_State *L,
         const ERL_NIF_TERM arg1,
         const ERL_NIF_TERM arg2,
         const ERL_NIF_TERM arg3);
@@ -124,9 +124,9 @@ evaluate_msg(msg_t *msg, worker_t *w)
 {
     switch(msg->type) {
     case msg_dofile:
-        return dofile(msg->env, w, msg->L, msg->arg1);
+        return dofile(msg->env, msg->L, msg->arg1);
     case msg_gencall:
-        return gencall(msg->env, w, msg->L, msg->arg1, msg->arg2, msg->arg3);
+        return gencall(msg->env, msg->L, msg->arg1, msg->arg2, msg->arg3);
     default:
         return make_error_tuple(msg->env, "invalid_command");
     }
@@ -320,7 +320,7 @@ sync_newstate(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
 
 static ERL_NIF_TERM
-dofile(ErlNifEnv *env, worker_t *w, lua_State *L, const ERL_NIF_TERM arg)
+dofile(ErlNifEnv *env, lua_State *L, const ERL_NIF_TERM arg)
 {
     char buff_str[STACK_STRING_BUFF];
     int size = enif_get_string(env, arg, buff_str, STACK_STRING_BUFF, ERL_NIF_LATIN1);
@@ -340,7 +340,25 @@ dofile(ErlNifEnv *env, worker_t *w, lua_State *L, const ERL_NIF_TERM arg)
 }
 
 static ERL_NIF_TERM
-elua_dofile(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+elua_dofile_sync(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    elua_t *res;
+
+    if(argc != 2) {
+        return enif_make_badarg(env);
+    }
+
+    // first arg: res
+    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res)) {
+        return enif_make_badarg(env);
+    }
+
+    return dofile(env,res->L, argv[1]);
+}
+
+
+static ERL_NIF_TERM
+elua_dofile_async(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     elua_t *res;
     msg_t *msg;
@@ -386,7 +404,7 @@ elua_dofile(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
 
 static ERL_NIF_TERM
-gencall(ErlNifEnv *env, worker_t *w, lua_State *L,
+gencall(ErlNifEnv *env, lua_State *L,
         const ERL_NIF_TERM arg_func,
         const ERL_NIF_TERM arg_fmt,
         const ERL_NIF_TERM arg_list)
@@ -516,27 +534,40 @@ gencall(ErlNifEnv *env, worker_t *w, lua_State *L,
     return make_error_tuple(env, error);
 }
 
-
 static ERL_NIF_TERM
-elua_gencall(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+elua_gencall_sync(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    elua_t *res;
+
+    // first arg: ref
+    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res)) {
+        return enif_make_badarg(env);
+    }
+
+    if(!enif_is_list(env, argv[3])) {
+        return enif_make_badarg(env);
+    }
+
+    return gencall(env, res->L, argv[1], argv[2], argv[3]);
+}
+static ERL_NIF_TERM
+elua_gencall_async(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     elua_t *res;
     msg_t *msg;
     ErlNifPid pid;
 
-    if(argc != 6)
-    {
+    if(argc != 6) {
         return enif_make_badarg(env);
     }
 
     // first arg: ref
-    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res))
-    {
+    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res)) {
         return enif_make_badarg(env);
     }
 
     // ref
-    if(!enif_is_ref(env, argv[1])){
+    if(!enif_is_ref(env, argv[1])) {
         return make_error_tuple(env, "invalid_ref");
     }
 
@@ -546,8 +577,7 @@ elua_gencall(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     }
 
     // fourth arg: list of input args
-    if(!enif_is_list(env, argv[5]))
-    {
+    if(!enif_is_list(env, argv[5])) {
         return enif_make_badarg(env);
     }
 
@@ -575,8 +605,13 @@ sync_gencast(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
 static ErlNifFunc nif_funcs[] = {
     {"newstate", 0, sync_newstate},
-    {"dofile_nif", 4, elua_dofile},
-    {"gencall_nif", 6, elua_gencall},
+
+    {"dofile_sync", 2, elua_dofile_sync},
+    {"dofile_async_nif", 4, elua_dofile_async},
+
+    {"gencall_sync", 4, elua_gencall_sync},
+    {"gencall_async_nif", 6, elua_gencall_async},
+
     {"gencast", 4, sync_gencast}
 };
 

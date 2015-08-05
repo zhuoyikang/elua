@@ -3,10 +3,15 @@
 
 -export([
          newstate/0,
-         dofile/2,
-         dofile_nif/4,
-         gencall/4,
-         gencall_nif/6,
+
+         dofile_sync/2,
+         dofile_async/2,
+         dofile_async_nif/4,
+
+         gencall_sync/4,
+         gencall_async/4,
+         gencall_async_nif/6,
+
          gencast/4
         ]).
 
@@ -32,14 +37,15 @@ receive_answer(Ref, Timeout) ->
       throw({error, timeout, Ref})
   end.
 
-dofile(L,FilePath) ->
+dofile_async(L,FilePath) ->
   Ref = make_ref(),
-  ok = dofile_nif(L,Ref,self(),FilePath),
+  ok = dofile_async_nif(L,Ref,self(),FilePath),
   receive_answer(Ref, 3000).
 
-gencall(L,Func,Format,InArgs) ->
+
+gencall_async(L,Func,Format,InArgs) ->
   Ref = make_ref(),
-  ok = gencall_nif(L,Ref,self(),Func,Format,InArgs),
+  ok = gencall_async_nif(L,Ref,self(),Func,Format,InArgs),
   receive_answer(Ref, 3000).
 
 init() ->
@@ -64,20 +70,15 @@ not_loaded(Line) ->
 newstate() ->
   not_loaded(?LINE).
 
-%% @doc xx
-%%
-%% Sends an asynchronous dofile command over the connection and returns
-%% ok immediately. When the database is opened
-%%
-%%  @spec dofile_nif(lua_state(), reference(), pid(), string()) -> ok | {error, message()}
-dofile_nif(_L,_Ref,_Dest,_FilePath) ->
+
+dofile_sync(_L,_FilePath) ->
+  not_loaded(?LINE).
+dofile_async_nif(_L,_Ref,_Dest,_FilePath) ->
   not_loaded(?LINE).
 
-%% general call call lua function and get the result
-%% format:  isb:i
-%% input args is [int string binary]
-%% output args is [int]
-gencall_nif(_L,_Ref,_Dest,_Func,_Format,_InArgs) ->
+gencall_sync(_L,_Func,_Format,_InArgs) ->
+  not_loaded(?LINE).
+gencall_async_nif(_L,_Ref,_Dest,_Func,_Format,_InArgs) ->
   not_loaded(?LINE).
 
 %% general cast call lua function and ignore the result
