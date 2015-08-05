@@ -21,6 +21,14 @@ ERL_NIF_TERM atom_error;
 #define WORKER_NO 7
 
 
+
+typedef struct
+{
+    int id;
+    lua_State *L;
+} elua_t;
+
+
 typedef enum
 {
     msg_unknown,
@@ -31,7 +39,8 @@ typedef enum
 
 typedef struct
 {
-    lua_State *L;
+    //lua_State *L;
+    elua_t *res;
 
     msg_type type;
 
@@ -124,9 +133,9 @@ evaluate_msg(msg_t *msg, worker_t *w)
 {
     switch(msg->type) {
     case msg_dofile:
-        return dofile(msg->env, msg->L, msg->arg1);
+        return dofile(msg->env, msg->res->L, msg->arg1);
     case msg_gencall:
-        return gencall(msg->env, msg->L, msg->arg1, msg->arg2, msg->arg3);
+        return gencall(msg->env, msg->res->L, msg->arg1, msg->arg2, msg->arg3);
     default:
         return make_error_tuple(msg->env, "invalid_command");
     }
@@ -152,6 +161,7 @@ worker_run(void *arg)
             // printf("%d receive\n", w->id);
             enif_send(NULL, &(msg->pid), msg->env, answer);
         }
+        enif_release_resource(msg->res);
         msg_destroy(msg);
     }
 
@@ -228,12 +238,6 @@ int tracker_init(Tracker *t)
 }
 
 
-typedef struct
-{
-    int id;
-    lua_State *L;
-} elua_t;
-
 
 void
 free_res(ErlNifEnv* env, void* obj)
@@ -250,15 +254,19 @@ unsigned int worker_hash(lua_State *L)
 }
 
 static ERL_NIF_TERM
-push_command(ErlNifEnv *env, lua_State *L, msg_t *msg)
+push_command(ErlNifEnv *env, elua_t *res, msg_t *msg)
 {
     Tracker *tracker = (Tracker*) enif_priv_data(env);
-    int hash_idx=worker_hash(L);
+    int hash_idx=worker_hash(res->L);
     assert(hash_idx>=0 && hash_idx< WORKER_NO);
     worker_t *w = &tracker->workers[hash_idx];
+    enif_keep_resource(res);
 
-    if(!queue_push(w->q, msg))
+    if(!queue_push(w->q, msg)){
+        enif_release_resource(res);
         return make_error_tuple(env, "command_push_failed");
+    }
+
 
     // printf("%d send\n", w->id);
     return atom_ok;
@@ -392,10 +400,10 @@ elua_dofile_async(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     msg->ref = enif_make_copy(msg->env, argv[1]);
     msg->pid = pid;
     msg->arg1 = enif_make_copy(msg->env, argv[3]);
-    msg->L = res->L;
+    msg->res = res;
 
     // printf("push command\n");
-    return push_command(env, res->L, msg);
+    return push_command(env, res, msg);
 }
 
 #define FMT_AND_LIST_NO_MATCH  "fmt and list not match"
@@ -592,9 +600,9 @@ elua_gencall_async(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     msg->arg1 = enif_make_copy(msg->env, argv[3]);
     msg->arg2 = enif_make_copy(msg->env, argv[4]);
     msg->arg3 = enif_make_copy(msg->env, argv[5]);
-    msg->L = res->L;
+    msg->res = res;
 
-    return push_command(env, res->L, msg);
+    return push_command(env, res, msg);
 }
 
 static ERL_NIF_TERM
