@@ -1,4 +1,4 @@
--module(elua_test).
+-module(elua_sync_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
