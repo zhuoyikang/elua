@@ -31,7 +31,8 @@ lock(Fun) ->
     fun(_) -> spawn(fun() -> Fun() end) end,
     lists:seq(1, Count)
    ),
-  timer:sleep(1000).
+  timer:sleep(3000),
+  io:format(" finis~n").
 
 heart() ->
   io:format("Tick~n", []).
@@ -53,7 +54,14 @@ async() ->
   Fun=fun() ->
           LuaPath=luafile("block.lua"),
           {ok,L}=elua:newstate(),
-          ok = elua:dofile_async(L,LuaPath)
+          catch elua:dofile_async(L,LuaPath)
+      end,
+  lock(Fun),
+  ok.
+
+nothing() ->
+  Fun=fun() ->
+          ok
       end,
   lock(Fun),
   ok.

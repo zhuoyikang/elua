@@ -242,7 +242,7 @@ int tracker_init(Tracker *t)
 void
 free_res(ErlNifEnv* env, void* obj)
 {
-    // printf("free res 0x%x\n" ,(unsigned int)obj);
+    //printf("free res 0x%x\n" ,(unsigned int)obj);
     elua_t *res = (elua_t *)obj;
     lua_close(res->L);
 }
@@ -266,8 +266,6 @@ push_command(ErlNifEnv *env, elua_t *res, msg_t *msg)
         enif_release_resource(res);
         return make_error_tuple(env, "command_push_failed");
     }
-
-
     // printf("%d send\n", w->id);
     return atom_ok;
 }

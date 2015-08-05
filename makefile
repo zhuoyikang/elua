@@ -5,16 +5,15 @@ t:
 	rebar compile
 	rebar eunit
 
-c:
-	erl -pa ebin -q -noshell -eval 'elua_crash:c()'
 
+# sync:
+# 	erl -pa ebin -q  -eval 'elua_block:sync()'
 
-sync:
-	erl -pa ebin -q -noshell -eval 'elua_block:sync()'
+# async:
+# 	erl -pa ebin -q  -eval 'elua_block:async()'
 
-
-async:
-	erl -pa ebin -q -noshell -eval 'elua_block:async()'
+# nothing:
+# 	erl -pa ebin -q  -eval 'elua_block:nothing()'
 
 
 .PHONY: t
