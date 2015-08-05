@@ -31,10 +31,7 @@ lua_base_test()->
   LuaPath=luafile("lua_file_exist.lua"),
   {ok,L}=elua:newstate(),
   ok=elua:dofile(L,LuaPath),
-  ok=elua:getglobal(L,"print"),
-  ok=elua:pushstring(L,"Hello from Lua!"),
-  ok=elua:call(L,1,0).
-
+  ok.
 
 %% load lua file.
 lua_dofile_test()->
@@ -143,12 +140,36 @@ gen_call_times_test() ->
                     Ret=elua:gencall(L,"test_int3_ret3","iii:iii",[2,3,4]),
                     ?assertEqual(Ret,{ok,[2,3,4]})
                 end,
-                lists:seq(1,1000000)),
+                lists:seq(1,10000)),
   ok.
 
 
-binary_test() ->
-  LuaPath=luafile("pack_test.lua"),
-  {ok,L}=elua:newstate(),
-  ok=elua:dofile(L,LuaPath),
+%% binary_test() ->
+%%   LuaPath=luafile("pack_test.lua"),
+%%   {ok,L}=elua:newstate(),
+%%   ok=elua:dofile(L,LuaPath),
+%%   ok.
+
+
+gen_call_times_concurrency_test() ->
+  LuaPath=luafile("gen_call.lua"),
+  N = 10000,
+  Pid = self(),
+  lists:foreach(fun(_X) ->
+                    spawn(fun() ->
+                              {ok,L}=elua:newstate(),
+                              ok=elua:dofile(L,LuaPath),
+                              Ret=elua:gencall(L,"test_int3_ret3","iii:iii",[2,3,4]),
+                              ?assertEqual(Ret,{ok,[2,3,4]}),
+                              Pid ! response
+                          end)
+                end,
+                lists:seq(1,N)),
+
+  %% wait response
+  lists:foreach(fun(_) ->
+                    receive
+                      response -> response
+                    end
+                end, lists:seq(1,N)),
   ok.

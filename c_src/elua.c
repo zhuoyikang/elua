@@ -6,9 +6,11 @@
 #include <assert.h>
 #include <string.h>
 // #include "epack.h"
+#include "equeue.h"
 
 ErlNifResourceType* RES_SYNC;
 ERL_NIF_TERM atom_ok;
+ERL_NIF_TERM atom_elua;
 ERL_NIF_TERM atom_error;
 
 #define STACK_STRING_BUFF 255
@@ -16,10 +18,215 @@ ERL_NIF_TERM atom_error;
 #define STR_NOT_ENOUGHT_MEMORY "not_enough_memory"
 #define STR_DO_FILE_ERROR "do_file_error"
 
+#define WORKER_NO 7
+
+
+typedef enum
+{
+    msg_unknown,
+    msg_dofile,
+    msg_gencall,
+    msg_stop
+}msg_type;
+
+typedef struct
+{
+    lua_State *L;
+
+    msg_type type;
+
+    ErlNifEnv *env;
+    ERL_NIF_TERM ref;
+    ErlNifPid pid;
+
+    ERL_NIF_TERM arg1;
+    ERL_NIF_TERM arg2;
+    ERL_NIF_TERM arg3;
+
+}msg_t;
+
+static msg_t *msg_create() {
+    ErlNifEnv *env;
+    msg_t *msg;
+
+    env = enif_alloc_env();
+    if(env == NULL) {
+        return NULL;
+    }
+
+    msg = (msg_t *) enif_alloc(sizeof(msg_t));
+    if(msg == NULL) {
+        enif_free_env(env);
+        return NULL;
+    }
+
+    msg->env =  env;
+    msg->type = msg_unknown;
+    msg->ref = 0;
+
+    return msg;
+}
+
+void msg_destroy(void *obj)
+{
+    msg_t *msg = (msg_t *) obj;
+
+    if(msg->env != NULL){
+        // fix
+        enif_free_env(msg->env);
+    }
+    enif_free(msg);
+}
+
+typedef struct
+{
+    ErlNifTid tid;
+    ErlNifThreadOpts* opts;
+
+    struct queue_t *q;
+    int alive;
+    int id;
+} worker_t;
+
+
 typedef struct
 {
     int count;
+    worker_t workers[WORKER_NO];
 } Tracker;
+
+
+static ERL_NIF_TERM
+make_answer(msg_t *msg, ERL_NIF_TERM answer)
+{
+    return enif_make_tuple3(msg->env, atom_elua, msg->ref, answer);
+}
+
+
+static ERL_NIF_TERM
+make_error_tuple(ErlNifEnv *env, const char *reason)
+{
+    return enif_make_tuple2(env, atom_error, enif_make_string(env, reason, ERL_NIF_LATIN1));
+}
+
+
+static ERL_NIF_TERM
+dofile(ErlNifEnv *env, worker_t *w, lua_State *L, const ERL_NIF_TERM arg);
+static ERL_NIF_TERM
+gencall(ErlNifEnv *env, worker_t *w, lua_State *L,
+        const ERL_NIF_TERM arg1,
+        const ERL_NIF_TERM arg2,
+        const ERL_NIF_TERM arg3);
+
+
+static ERL_NIF_TERM
+evaluate_msg(msg_t *msg, worker_t *w)
+{
+    switch(msg->type) {
+    case msg_dofile:
+        return dofile(msg->env, w, msg->L, msg->arg1);
+    case msg_gencall:
+        return gencall(msg->env, w, msg->L, msg->arg1, msg->arg2, msg->arg3);
+    default:
+        return make_error_tuple(msg->env, "invalid_command");
+    }
+}
+
+static void *
+worker_run(void *arg)
+{
+    worker_t *w = (worker_t *) arg;
+    msg_t *msg;
+    int continue_running = 1;
+    ERL_NIF_TERM answer;
+
+    w->alive = 1;
+    while(continue_running) {
+        msg = queue_pop(w->q);
+
+        if(msg->type == msg_stop) {
+            continue_running = 0;
+        }
+        else {
+            answer = make_answer(msg, evaluate_msg(msg, w));
+            // printf("%d receive\n", w->id);
+            enif_send(NULL, &(msg->pid), msg->env, answer);
+        }
+        msg_destroy(msg);
+    }
+
+    w->alive = 0;
+    return NULL;
+}
+
+int worker_init(worker_t *worker,int id)
+{
+    struct queue_t *q;
+    ErlNifThreadOpts* opts;
+
+    q = queue_create();
+    if(q == NULL ) {
+        goto queue_error;
+    }
+
+    worker->q = q;
+    worker->id =id;
+    opts = enif_thread_opts_create("lua_thread_opts");
+
+    if(opts == NULL) {
+        goto opts_error;
+    }
+
+    worker->opts = opts;
+    if(enif_thread_create("lua_thread",
+                          &worker->tid,
+                          worker_run,
+                          worker,
+                          worker->opts) != 0) {
+        goto create_error;
+    }
+
+    return 0;
+
+ create_error:
+    enif_thread_opts_destroy(opts);
+ opts_error:
+    queue_destroy(q);
+ queue_error:
+    return -1;
+}
+
+void woker_destory(worker_t *w)
+{
+    msg_t *msg = msg_create();
+    msg->type = msg_stop;
+    queue_push(w->q, msg);
+
+    enif_thread_join(w->tid, NULL);
+    enif_thread_opts_destroy(w->opts);
+
+    queue_destroy(w->q);
+}
+
+int tracker_init(Tracker *t)
+{
+    int i;
+    for(i=0; i< WORKER_NO; i++) {
+        if(worker_init(&t->workers[i], i) <0 ) {
+            goto error;
+        }
+    }
+
+    return 0;
+
+ error:
+    while(i>0) {
+        --i;
+        woker_destory(&t->workers[i]);
+    }
+    return -1;
+}
+
 
 typedef struct
 {
@@ -27,12 +234,34 @@ typedef struct
     lua_State *L;
 } elua_t;
 
+
 void
 free_res(ErlNifEnv* env, void* obj)
 {
     // printf("free res 0x%x\n" ,(unsigned int)obj);
     elua_t *res = (elua_t *)obj;
     lua_close(res->L);
+}
+
+unsigned int worker_hash(lua_State *L)
+{
+    unsigned int idx = (unsigned int)L;
+    return idx % WORKER_NO;
+}
+
+static ERL_NIF_TERM
+push_command(ErlNifEnv *env, lua_State *L, msg_t *msg)
+{
+    Tracker *tracker = (Tracker*) enif_priv_data(env);
+    int hash_idx=worker_hash(L);
+    assert(hash_idx>=0 && hash_idx< WORKER_NO);
+    worker_t *w = &tracker->workers[hash_idx];
+
+    if(!queue_push(w->q, msg))
+        return make_error_tuple(env, "command_push_failed");
+
+    // printf("%d send\n", w->id);
+    return atom_ok;
 }
 
 static int
@@ -47,10 +276,14 @@ load(ErlNifEnv* env, void** priv, ERL_NIF_TERM load_info)
     if(RES_SYNC == NULL) return -1;
 
     atom_ok = enif_make_atom(env, "ok");
+    atom_elua = enif_make_atom(env, "elua");
     atom_error = enif_make_atom(env, "error");
 
     tracker = (Tracker*) enif_alloc(sizeof(Tracker));
-    tracker->count = 0;
+    if(tracker_init(tracker) < 0 ) {
+        enif_free(tracker);
+        return -1;
+    }
     *priv = (void*) tracker;
 
     return 0;
@@ -84,170 +317,95 @@ sync_newstate(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     return enif_make_tuple2(env, atom_ok, ret);
 };
 
+
+
 static ERL_NIF_TERM
-sync_dofile(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+dofile(ErlNifEnv *env, worker_t *w, lua_State *L, const ERL_NIF_TERM arg)
 {
-    elua_t *res;
     char buff_str[STACK_STRING_BUFF];
-
-    if(argc != 2)
-    {
-        return enif_make_badarg(env);
+    int size = enif_get_string(env, arg, buff_str, STACK_STRING_BUFF, ERL_NIF_LATIN1);
+    if(size <= 0) {
+        return make_error_tuple(env, "invalid_filename");
     }
 
-    // first arg: ref
-    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res))
-    {
-	return enif_make_badarg(env);
+    if(luaL_dofile(L, buff_str) !=LUA_OK) {
+        const char *error = lua_tostring(L, -1);
+        ERL_NIF_TERM error_tuple = make_error_tuple(env, error);
+        lua_pop(L,1);
+        return error_tuple;
     }
 
-    // second arg: file_path
-    if(enif_get_string(env, argv[1], buff_str, STACK_STRING_BUFF, ERL_NIF_LATIN1)<=0)
-    {
-        return enif_make_badarg(env);
-    }
-
-    if(luaL_dofile(res->L, buff_str) !=LUA_OK) {
-        const char *error = lua_tostring(res->L, -1);
-        ERL_NIF_TERM error_term = enif_make_string(env, error, ERL_NIF_LATIN1);
-        lua_pop(res->L,1);
-        return enif_make_tuple2(env, atom_error, error_term);
-    }
-
+    // printf("do file well\n");
     return atom_ok;
 }
 
 static ERL_NIF_TERM
-sync_getglobal(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+elua_dofile(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     elua_t *res;
-    char buff_str[STACK_STRING_BUFF];
+    msg_t *msg;
+    ErlNifPid pid;
 
-    if(argc != 2)
-    {
+    if(argc != 4) {
         return enif_make_badarg(env);
     }
 
-    // first arg: ref
-    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res))
-    {
-	return enif_make_badarg(env);
-    }
-
-    // second arg: atom of table name
-    if(enif_get_string(env, argv[1], buff_str, STACK_STRING_BUFF, ERL_NIF_LATIN1)<=0)
-    {
+    // first arg: res
+    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res)) {
         return enif_make_badarg(env);
     }
 
-    // call
-    lua_getglobal(res->L, buff_str);
-
-    return atom_ok;
-};
-
-
-static ERL_NIF_TERM
-sync_pushstring(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
-{
-
-    elua_t *res;
-    char buff_str[STACK_STRING_BUFF];
-
-    if(argc != 2)
-    {
-        return enif_make_badarg(env);
+    // ref
+    if(!enif_is_ref(env, argv[1])){
+        return make_error_tuple(env, "invalid_ref");
     }
 
-    // first arg: ref
-    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res))
-    {
-	return enif_make_badarg(env);
+    // dest pid
+    if(!enif_get_local_pid(env, argv[2], &pid)) {
+        return make_error_tuple(env, "invalid_pid");
     }
 
-    // second arg: atom of table name
-    if(enif_get_string(env, argv[1], buff_str, STACK_STRING_BUFF, ERL_NIF_LATIN1)<=0)
-    {
-        return enif_make_badarg(env);
+    msg = msg_create();
+    if(!msg) {
+        return make_error_tuple(env, "command_create_failed");
     }
 
-    lua_pushstring(res->L, buff_str);
-    return atom_ok;
-};
+    msg->type = msg_dofile;
+    msg->ref = enif_make_copy(msg->env, argv[1]);
+    msg->pid = pid;
+    msg->arg1 = enif_make_copy(msg->env, argv[3]);
+    msg->L = res->L;
 
-
-static ERL_NIF_TERM
-sync_call(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
-{
-    elua_t *res;
-    unsigned int in_args, out_args;
-
-    if(argc != 3)
-    {
-        return enif_make_badarg(env);
-    }
-
-    // first arg: ref
-    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res))
-    {
-	return enif_make_badarg(env);
-    }
-
-    if(!enif_get_uint(env, argv[1], &in_args))
-    {
-        return enif_make_badarg(env);
-    }
-
-    if(!enif_get_uint(env, argv[2], &out_args))
-    {
-        return enif_make_badarg(env);
-    }
-
-    lua_call(res->L, in_args, out_args);
-
-    return atom_ok;
-};
+    // printf("push command\n");
+    return push_command(env, res->L, msg);
+}
 
 #define FMT_AND_LIST_NO_MATCH  "fmt and list not match"
 #define FMT_AND_RET_NO_MATCH  "fmt and ret not match"
 #define FMT_WRONG  "fmt wrong"
 
+
 static ERL_NIF_TERM
-sync_gencall(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+gencall(ErlNifEnv *env, worker_t *w, lua_State *L,
+        const ERL_NIF_TERM arg_func,
+        const ERL_NIF_TERM arg_fmt,
+        const ERL_NIF_TERM arg_list)
 {
-    elua_t *res;
     char buff_str[STACK_STRING_BUFF];
     char buff_fmt[STACK_STRING_BUFF];
     char buff_fun[STACK_STRING_BUFF/2];
     unsigned input_len=0;
     unsigned output_len=0;
 
-    if(argc != 4)
-    {
+    if(enif_get_string(env, arg_func, buff_fun, STACK_STRING_BUFF/2, ERL_NIF_LATIN1)<=0){
         return enif_make_badarg(env);
     }
 
-    // first arg: ref
-    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res))
-    {
-	return enif_make_badarg(env);
-    }
-
-    // second arg : function name
-    if(enif_get_string(env, argv[1], buff_fun, STACK_STRING_BUFF/2, ERL_NIF_LATIN1)<=0)
-    {
+    if(enif_get_string(env, arg_fmt, buff_fmt, STACK_STRING_BUFF, ERL_NIF_LATIN1)<=0){
         return enif_make_badarg(env);
     }
 
-    // third arg: format
-    if(enif_get_string(env, argv[2], buff_fmt, STACK_STRING_BUFF, ERL_NIF_LATIN1)<=0)
-    {
-        return enif_make_badarg(env);
-    }
-
-    // fourth arg: list of input args
-    if(!enif_is_list(env, argv[3]))
-    {
+    if(!enif_is_list(env, arg_list)){
         return enif_make_badarg(env);
     }
 
@@ -256,11 +414,11 @@ sync_gencall(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     // printf("input args %d output args %d fun %s\n", input_len, output_len, buff_fun);
     ERL_NIF_TERM head,tail,list;
-    list=argv[3];
+    list=arg_list;
 
     int i=0, status = 0, ret;
     ERL_NIF_TERM return_list = enif_make_list(env, 0);
-    lua_getglobal(res->L, buff_fun);
+    lua_getglobal(L, buff_fun);
     const char *error;
 
     while(buff_fmt[i]!='\0') {
@@ -278,9 +436,9 @@ sync_gencall(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         switch(buff_fmt[i]) {
         case ':' :
             status=1;
-            if(lua_pcall(res->L, input_len, output_len,0) != LUA_OK) {
-                error = lua_tostring(res->L, -1);
-                lua_pop(res->L,1);
+            if(lua_pcall(L, input_len, output_len,0) != LUA_OK) {
+                error = lua_tostring(L, -1);
+                lua_pop(L,1);
                 return enif_make_tuple2(env, atom_error, enif_make_string(env, error, ERL_NIF_LATIN1));
             }
             //output_len = - 1;
@@ -295,17 +453,17 @@ sync_gencall(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
                     goto error;
                 }
 
-                lua_pushinteger(res->L, input_int);
+                lua_pushinteger(L, input_int);
             } else if ( status==1 ){
                 int isnum;
-                int n = lua_tointegerx(res->L, -1, &isnum);
+                int n = lua_tointegerx(L, -1, &isnum);
                 if(!isnum){
                     error = FMT_AND_LIST_NO_MATCH;
                     goto error;
                 }
                 // printf("output %d %d\n", output_len, n);
                 return_list = enif_make_list_cell(env, enif_make_int(env, n), return_list);
-                lua_pop(res->L,1);
+                lua_pop(L,1);
                 output_len--;
             }
             break;
@@ -316,24 +474,24 @@ sync_gencall(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
                     error = FMT_AND_LIST_NO_MATCH;
                     goto error;
                 }
-                lua_pushstring(res->L, buff_str);
+                lua_pushstring(L, buff_str);
 
             } else if ( status==1 ) {
-                const char *s = lua_tostring(res->L, -1);
+                const char *s = lua_tostring(L, -1);
                 if (s==NULL) {
                     error = FMT_AND_RET_NO_MATCH;
                     goto error;
                 }
                 // printf("output %d %s\n", output_len, s);
                 return_list = enif_make_list_cell(env, enif_make_string(env, s, ERL_NIF_LATIN1), return_list);
-                lua_pop(res->L,1);
+                lua_pop(L,1);
                 output_len--;
             }
             break;
-        /* case 'd': */
-        /*     break; */
-        /* case 'b': */
-        /*     break; */
+            /* case 'd': */
+            /*     break; */
+            /* case 'b': */
+            /*     break; */
         default:
             error = FMT_WRONG;
             goto error;
@@ -349,15 +507,64 @@ sync_gencall(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     // @fix clean the heap var.
     // before call, pop the call
     if(status ==0 ) {
-        lua_pop(res->L, 1);
+        lua_pop(L, 1);
     }
-    // after call ,pop the left ret.
     else if(output_len>0) {
-        lua_pop(res->L, output_len);
-        // printf("would not be here %d \n", output_len);
+        lua_pop(L, output_len);
     }
 
-    return enif_make_tuple2(env, atom_error, enif_make_string(env, error, ERL_NIF_LATIN1));
+    return make_error_tuple(env, error);
+}
+
+
+static ERL_NIF_TERM
+elua_gencall(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    elua_t *res;
+    msg_t *msg;
+    ErlNifPid pid;
+
+    if(argc != 6)
+    {
+        return enif_make_badarg(env);
+    }
+
+    // first arg: ref
+    if(!enif_get_resource(env, argv[0], RES_SYNC, (void**) &res))
+    {
+        return enif_make_badarg(env);
+    }
+
+    // ref
+    if(!enif_is_ref(env, argv[1])){
+        return make_error_tuple(env, "invalid_ref");
+    }
+
+    // dest pid
+    if(!enif_get_local_pid(env, argv[2], &pid)) {
+        return make_error_tuple(env, "invalid_pid");
+    }
+
+    // fourth arg: list of input args
+    if(!enif_is_list(env, argv[5]))
+    {
+        return enif_make_badarg(env);
+    }
+
+    msg = msg_create();
+    if(!msg) {
+        return make_error_tuple(env, "command_create_failed");
+    }
+
+    msg->type = msg_gencall;
+    msg->ref = enif_make_copy(msg->env, argv[1]);
+    msg->pid = pid;
+    msg->arg1 = enif_make_copy(msg->env, argv[3]);
+    msg->arg2 = enif_make_copy(msg->env, argv[4]);
+    msg->arg3 = enif_make_copy(msg->env, argv[5]);
+    msg->L = res->L;
+
+    return push_command(env, res->L, msg);
 }
 
 static ERL_NIF_TERM
@@ -368,12 +575,9 @@ sync_gencast(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
 static ErlNifFunc nif_funcs[] = {
     {"newstate", 0, sync_newstate},
-    {"dofile", 2, sync_dofile},
-    {"getglobal", 2, sync_getglobal},
-    {"pushstring", 2, sync_pushstring},
-    {"call", 3, sync_call},
-    {"gencall", 4, sync_gencall},
-    {"gencast", 4, sync_gencast},
+    {"dofile_nif", 4, elua_dofile},
+    {"gencall_nif", 6, elua_gencall},
+    {"gencast", 4, sync_gencast}
 };
 
 ERL_NIF_INIT(elua, nif_funcs, &load, NULL, NULL, NULL);
