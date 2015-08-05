@@ -1,4 +1,4 @@
-package.cpath=package.cpath..";../priv/?.so;"
+package.cpath=package.cpath..";../priv/?.so;priv/?.so;"
 require "pack"
 
 bpack=string.pack
