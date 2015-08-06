@@ -6,6 +6,11 @@
 -define(LIBNAME,elua).
 -define(LUANAME,lua).
 
+current_utc() ->
+  {MegaSecs, Secs, _} = erlang:now(),
+  MegaSecs * 1000000 + Secs.
+
+
 
 luafile(FileName) ->
   case code:priv_dir(?APPNAME) of
@@ -24,28 +29,46 @@ lock(Fun) ->
   Count = erlang:system_info(schedulers),
   lock(Fun,Count).
 
+
+statsc(TimeArray) ->
+  {Min,Max,Sum} = lists:foldl(fun(T,{Max,Min,Sum}) ->
+                                  Min2 = case  T < Min of
+                                           true -> T;
+                                           _ -> Min
+                                         end,
+                                  Max2 = case  T > Max of
+                                           true -> T;
+                                           _ -> Max
+                                         end,
+                                  Sum2= Sum+T,
+                                  {Max2,Min2,Sum2}
+                              end, {0,100000000,0}, TimeArray),
+  {Min,Max,Sum/length(TimeArray)}.
+
+
 lock(Fun,Count) ->
   io:format("Starting heartbeat.~n", []),
   {ok, _} = timer:apply_interval(500, ?MODULE, heart, []),
   timer:sleep(2000),
   Pid = self(),
   io:format("Locking the VM~n", []),
-  statistics(wall_clock),
+  Begin = current_utc(),
   lists:foreach(
     fun(_) -> spawn(fun() ->
+                        statistics(wall_clock),
                         Fun(),
-                        Pid! response
+                        {_,Time} = statistics(wall_clock),
+                        Pid! {response, Time}
                     end) end,
     lists:seq(1, Count)
    ),
 
-  lists:foreach(fun(_) ->
-                    receive
-                      response -> response
-                    end
-                end, lists:seq(1,Count)),
-  {_, Time} = statistics(wall_clock),
-  io:format(" finis ~p~n", [Time]).
+  Times = lists:map(fun(_) ->
+                        receive
+                          {response, Time} -> Time
+                        end
+                    end, lists:seq(1,Count)),
+  io:format("finis ~p ~p~n", [current_utc() - Begin, statsc(Times)]).
 
 heart() ->
   io:format("Tick~n", []).
