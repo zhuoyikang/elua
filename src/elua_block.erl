@@ -55,19 +55,17 @@ lock(Fun,Count) ->
   Begin = current_utc(),
   lists:foreach(
     fun(_) -> spawn(fun() ->
-                        statistics(wall_clock),
-                        Fun(),
-                        {_,Time} = statistics(wall_clock),
-                        Pid! {response, Time}
+                        {Time,_} = timer:tc(Fun),
+                        Pid! {response, Time / 1000}
                     end) end,
     lists:seq(1, Count)
    ),
-
   Times = lists:map(fun(_) ->
                         receive
                           {response, Time} -> Time
                         end
                     end, lists:seq(1,Count)),
+  io:format("~p", [Times]),
   io:format("finis ~p ~p~n", [current_utc() - Begin, statsc(Times)]).
 
 heart() ->
@@ -107,7 +105,7 @@ r400ms_a(N) ->
   Fun=fun() ->
           LuaPath=luafile("block_400ms.lua"),
           {ok,L}=elua:newstate(),
-          catch elua:dofile_async(L,LuaPath)
+          elua:dofile_async(L,LuaPath)
       end,
   lock(Fun,N).
 
