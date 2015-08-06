@@ -77,7 +77,7 @@ sync() ->
   Fun=fun() ->
           io:format("x~n"),
           LuaPath=luafile("block.lua"),
-          {ok,L}=elua:newstate(),
+          {ok,L}=elua:newstate_sync(),
           ok=elua:dofile_sync(L,LuaPath)
       end,
   lock(Fun),
@@ -87,7 +87,7 @@ sync() ->
 async() ->
   Fun=fun() ->
           LuaPath=luafile("block.lua"),
-          {ok,L}=elua:newstate(),
+          {ok,L}=elua:newstate_sync(),
           elua:dofile_async(L,LuaPath)
       end,
   lock(Fun),
@@ -104,7 +104,7 @@ nothing() ->
 r400ms_a(N) ->
   Fun=fun() ->
           LuaPath=luafile("block_400ms.lua"),
-          {ok,L}=elua:newstate(),
+          {ok,L}=elua:newstate_async(),
           elua:dofile_async(L,LuaPath)
       end,
   lock(Fun,N).
@@ -113,7 +113,17 @@ r400ms_a(N) ->
 r400ms_s(N) ->
   Fun=fun() ->
           LuaPath=luafile("block_400ms.lua"),
-          {ok,L}=elua:newstate(),
-          catch elua:dofile_sync(L,LuaPath)
+          {ok,L}=elua:newstate_sync(),
+          elua:dofile_sync(L,LuaPath)
+      end,
+  lock(Fun,N).
+
+
+
+r400ms_sa(N) ->
+  Fun=fun() ->
+          LuaPath=luafile("block_400ms.lua"),
+          {ok,L}=elua:newstate_sync(),
+          elua:dofile_async(L,LuaPath)
       end,
   lock(Fun,N).

@@ -27,7 +27,7 @@ c() ->
   lists:foreach(fun(X) ->
                     spawn(fun() ->
                               io:format("fork ~p~n", [X]),
-                              {ok,L}=elua:newstate(),
+                              {ok,L}=elua:newstate_sync(),
                               catch elua:dofile_async(L,LuaPath),
                               io:format("end ~p~n", [X])
                           end)

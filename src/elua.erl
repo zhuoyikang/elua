@@ -2,7 +2,9 @@
 -on_load(init/0).
 
 -export([
-         newstate/0,
+         newstate_sync/0,
+         newstate_async/0,
+         newstate_async_nif/2,
 
          dofile_sync/2,
          dofile_async/2,
@@ -37,6 +39,12 @@ receive_answer(Ref, Timeout) ->
       throw({error, timeout, Ref})
   end.
 
+newstate_async() ->
+  Ref = make_ref(),
+  ok = newstate_async_nif(Ref, self()),
+  receive_answer(Ref, 100000).
+
+
 dofile_async(L,FilePath) ->
   Ref = make_ref(),
   ok = dofile_async_nif(L,Ref,self(),FilePath),
@@ -67,9 +75,11 @@ not_loaded(Line) ->
 
 
 %% some lua api
-newstate() ->
+newstate_sync() ->
   not_loaded(?LINE).
 
+newstate_async_nif(_Ref,_Dest) ->
+  not_loaded(?LINE).
 
 dofile_sync(_L,_FilePath) ->
   not_loaded(?LINE).

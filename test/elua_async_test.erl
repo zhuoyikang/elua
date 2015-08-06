@@ -29,7 +29,7 @@ luafile_test() ->
 %% luad file base test
 lua_base_test()->
   LuaPath=luafile("lua_file_exist.lua"),
-  {ok,L}=elua:newstate(),
+  {ok,L}=elua:newstate_async(),
   ok=elua:dofile_async(L,LuaPath),
   ok.
 
@@ -38,7 +38,7 @@ lua_dofile_test()->
   LuaPath=luafile("do_file_good.lua"),
   Lua1Path=luafile("do_file_bad.lua"),
   Lua2Path=luafile("do_file_bad2.lua"),
-  {ok,L}=elua:newstate(),
+  {ok,L}=elua:newstate_async(),
   ok=elua:dofile_async(L,LuaPath),
   {error,_}=elua:dofile_async(L,Lua1Path),
   {error,_}=elua:dofile_async(L,Lua2Path),
@@ -46,7 +46,7 @@ lua_dofile_test()->
 
 %% check stack over flow
 lua_dofile_n_test() ->
-  {ok,L}=elua:newstate(),
+  {ok,L}=elua:newstate_async(),
   LuaPath=luafile("do_file_good.lua"),
   Lua1Path=luafile("do_file_bad.lua"),
   Lua2Path=luafile("do_file_bad2.lua"),
@@ -62,7 +62,7 @@ lua_dofile_n_test() ->
 gen_call_test()->
   LuaPath=luafile("gen_call.lua"),
 
-  {ok,L}=elua:newstate(),
+  {ok,L}=elua:newstate_async(),
 
   %% load the t1.lua
   ok=elua:dofile_async(L,LuaPath),
@@ -98,7 +98,7 @@ gen_call_test()->
 gen_bad_call_test()->
   LuaPath=luafile("gen_call.lua"),
 
-  {ok,L}=elua:newstate(),
+  {ok,L}=elua:newstate_async(),
 
   %% load the t1.lua
   ok=elua:dofile_async(L,LuaPath),
@@ -134,7 +134,7 @@ gen_bad_call_test()->
 %% test whether stack overflow
 gen_call_times_test() ->
   LuaPath=luafile("gen_call.lua"),
-  {ok,L}=elua:newstate(),
+  {ok,L}=elua:newstate_async(),
   ok=elua:dofile_async(L,LuaPath),
   lists:foreach(fun(_X) ->
                     Ret=elua:gencall_async(L,"test_int3_ret3","iii:iii",[2,3,4]),
@@ -146,7 +146,7 @@ gen_call_times_test() ->
 
 %% binary_test() ->
 %%   LuaPath=luafile("pack_test.lua"),
-%%   {ok,L}=elua:newstate(),
+%%   {ok,L}=elua:newstate_async(),
 %%   ok=elua:dofile_async(L,LuaPath),
 %%   ok.
 
@@ -157,9 +157,59 @@ gen_call_times_concurrency_test() ->
   Pid = self(),
   lists:foreach(fun(_X) ->
                     spawn(fun() ->
-                              {ok,L}=elua:newstate(),
+                              {ok,L}=elua:newstate_async(),
                               ok=elua:dofile_async(L,LuaPath),
                               Ret=elua:gencall_async(L,"test_int3_ret3","iii:iii",[2,3,4]),
+                              ?assertEqual(Ret,{ok,[2,3,4]}),
+                              Pid ! response
+                          end)
+                end,
+                lists:seq(1,N)),
+
+  %% wait response
+  lists:foreach(fun(_) ->
+                    receive
+                      response -> response
+                    end
+                end, lists:seq(1,N)),
+  ok.
+
+
+
+
+gen_call_times_concurrency2_test() ->
+  LuaPath=luafile("gen_call.lua"),
+  N = 10000,
+  Pid = self(),
+  lists:foreach(fun(_X) ->
+                    spawn(fun() ->
+                              {ok,L}=elua:newstate_sync(),
+                              ok=elua:dofile_async(L,LuaPath),
+                              Ret=elua:gencall_async(L,"test_int3_ret3","iii:iii",[2,3,4]),
+                              ?assertEqual(Ret,{ok,[2,3,4]}),
+                              Pid ! response
+                          end)
+                end,
+                lists:seq(1,N)),
+
+  %% wait response
+  lists:foreach(fun(_) ->
+                    receive
+                      response -> response
+                    end
+                end, lists:seq(1,N)),
+  ok.
+
+
+gen_call_times_concurrency3_test() ->
+  LuaPath=luafile("gen_call.lua"),
+  N = 10000,
+  Pid = self(),
+  lists:foreach(fun(_X) ->
+                    spawn(fun() ->
+                              {ok,L}=elua:newstate_async(),
+                              ok=elua:dofile_sync(L,LuaPath),
+                              Ret=elua:gencall_sync(L,"test_int3_ret3","iii:iii",[2,3,4]),
                               ?assertEqual(Ret,{ok,[2,3,4]}),
                               Pid ! response
                           end)

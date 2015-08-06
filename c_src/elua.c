@@ -29,9 +29,9 @@ typedef struct
 } elua_t;
 
 
-typedef enum
-{
+typedef enum {
     msg_unknown,
+    msg_newstate,
     msg_dofile,
     msg_gencall,
     msg_stop
@@ -39,9 +39,8 @@ typedef enum
 
 typedef struct
 {
-    //lua_State *L;
+    ErlNifEnv *hold_env;
     elua_t *res;
-
     msg_type type;
 
     ErlNifEnv *env;
@@ -120,7 +119,12 @@ make_error_tuple(ErlNifEnv *env, const char *reason)
 
 
 static ERL_NIF_TERM
-dofile(ErlNifEnv *env, lua_State *L, const ERL_NIF_TERM arg);
+newstate(ErlNifEnv *env, ErlNifEnv *hold_env);
+
+static ERL_NIF_TERM
+dofile(ErlNifEnv *env, lua_State *L,
+       const ERL_NIF_TERM arg);
+
 static ERL_NIF_TERM
 gencall(ErlNifEnv *env, lua_State *L,
         const ERL_NIF_TERM arg1,
@@ -132,6 +136,8 @@ static ERL_NIF_TERM
 evaluate_msg(msg_t *msg, worker_t *w)
 {
     switch(msg->type) {
+    case msg_newstate:
+        return newstate(msg->env, msg->hold_env);
     case msg_dofile:
         return dofile(msg->env, msg->res->L, msg->arg1);
     case msg_gencall:
@@ -161,7 +167,9 @@ worker_run(void *arg)
             // printf("%d receive\n", w->id);
             enif_send(NULL, &(msg->pid), msg->env, answer);
         }
-        enif_release_resource(msg->res);
+        if(msg->res!=NULL) {
+            enif_release_resource(msg->res);
+        }
         msg_destroy(msg);
     }
 
@@ -257,13 +265,25 @@ static ERL_NIF_TERM
 push_command(ErlNifEnv *env, elua_t *res, msg_t *msg)
 {
     Tracker *tracker = (Tracker*) enif_priv_data(env);
-    int hash_idx=worker_hash(res->L);
+    int hash_idx;
+
+    if(res==NULL){
+        hash_idx=0;
+    }else{
+        hash_idx=worker_hash(res->L);
+    }
+
     assert(hash_idx>=0 && hash_idx< WORKER_NO);
     worker_t *w = &tracker->workers[hash_idx];
-    enif_keep_resource(res);
+
+    if(res!=NULL) {
+        enif_keep_resource(res);
+    }
 
     if(!queue_push(w->q, msg)){
-        enif_release_resource(res);
+        if(res!=NULL) {
+            enif_release_resource(res);
+        }
         return make_error_tuple(env, "command_push_failed");
     }
     // printf("%d send\n", w->id);
@@ -295,25 +315,26 @@ load(ErlNifEnv* env, void** priv, ERL_NIF_TERM load_info)
     return 0;
 }
 
+
+
 static ERL_NIF_TERM
-sync_newstate(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+newstate(ErlNifEnv *env, ErlNifEnv *hold_env)
 {
     ERL_NIF_TERM ret;
     lua_State *L;
     elua_t *res;
 
     L = luaL_newstate();
-    if(L==NULL){
-        return enif_make_tuple2(env, atom_error,enif_make_string(env, STR_NOT_ENOUGHT_MEMORY, ERL_NIF_LATIN1));
+    if(L==NULL) {
+        return enif_make_tuple2(env, atom_error, enif_make_string(env, STR_NOT_ENOUGHT_MEMORY, ERL_NIF_LATIN1));
     }
 
     luaL_openlibs(L);
-    // luaopen_pack(L);
 
     res = enif_alloc_resource(RES_SYNC, sizeof(elua_t));
     if(res == NULL) return enif_make_badarg(env);
 
-    // printf("alloc res 0x%x\n" ,(unsigned int)res);
+    //printf("alloc res 0x%x\n" ,(unsigned int)res);
 
     ret = enif_make_resource(env, res);
     enif_release_resource(res);
@@ -321,6 +342,48 @@ sync_newstate(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     res->L = L;
 
     return enif_make_tuple2(env, atom_ok, ret);
+}
+
+
+
+static ERL_NIF_TERM
+elua_newstate_async(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    msg_t *msg;
+    ErlNifPid pid;
+
+    if(argc != 2) {
+        return enif_make_badarg(env);
+    }
+
+    // ref
+    if(!enif_is_ref(env, argv[0])){
+        return make_error_tuple(env, "invalid_ref");
+    }
+
+    // dest pid
+    if(!enif_get_local_pid(env, argv[1], &pid)) {
+        return make_error_tuple(env, "invalid_pid");
+    }
+
+    msg = msg_create();
+    if(!msg) {
+        return make_error_tuple(env, "command_create_failed");
+    }
+
+    msg->type = msg_newstate;
+    msg->ref = enif_make_copy(msg->env, argv[0]);
+    msg->pid = pid;
+    msg->hold_env = env;
+    msg->res=NULL;
+
+    return push_command(env, NULL, msg);
+}
+
+static ERL_NIF_TERM
+elua_newstate_sync(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    return newstate(env, env);
 };
 
 
@@ -610,7 +673,8 @@ sync_gencast(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 }
 
 static ErlNifFunc nif_funcs[] = {
-    {"newstate", 0, sync_newstate},
+    {"newstate_sync", 0, elua_newstate_sync},
+    {"newstate_async_nif", 2, elua_newstate_async},
 
     {"dofile_sync", 2, elua_dofile_sync},
     {"dofile_async_nif", 4, elua_dofile_async},
