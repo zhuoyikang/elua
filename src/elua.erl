@@ -40,13 +40,13 @@ receive_answer(Ref, Timeout) ->
 dofile_async(L,FilePath) ->
   Ref = make_ref(),
   ok = dofile_async_nif(L,Ref,self(),FilePath),
-  receive_answer(Ref, 1000).
+  receive_answer(Ref, 100000).
 
 
 gencall_async(L,Func,Format,InArgs) ->
   Ref = make_ref(),
   ok = gencall_async_nif(L,Ref,self(),Func,Format,InArgs),
-  receive_answer(Ref, 1000).
+  receive_answer(Ref, 100000).
 
 init() ->
   SoName=case code:priv_dir(?APPNAME) of

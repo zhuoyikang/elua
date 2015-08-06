@@ -20,19 +20,32 @@ luafile(FileName) ->
       filename:join([Dir,"../",?LUANAME,FileName])
   end.
 
-
 lock(Fun) ->
+  Count = erlang:system_info(schedulers),
+  lock(Fun,Count).
+
+lock(Fun,Count) ->
   io:format("Starting heartbeat.~n", []),
   {ok, _} = timer:apply_interval(500, ?MODULE, heart, []),
   timer:sleep(2000),
+  Pid = self(),
   io:format("Locking the VM~n", []),
-  Count = erlang:system_info(schedulers),
+  statistics(wall_clock),
   lists:foreach(
-    fun(_) -> spawn(fun() -> Fun() end) end,
+    fun(_) -> spawn(fun() ->
+                        Fun(),
+                        Pid! response
+                    end) end,
     lists:seq(1, Count)
    ),
-  timer:sleep(3000),
-  io:format(" finis~n").
+
+  lists:foreach(fun(_) ->
+                    receive
+                      response -> response
+                    end
+                end, lists:seq(1,Count)),
+  {_, Time} = statistics(wall_clock),
+  io:format(" finis ~p~n", [Time]).
 
 heart() ->
   io:format("Tick~n", []).
@@ -54,7 +67,7 @@ async() ->
   Fun=fun() ->
           LuaPath=luafile("block.lua"),
           {ok,L}=elua:newstate(),
-          catch elua:dofile_async(L,LuaPath)
+          elua:dofile_async(L,LuaPath)
       end,
   lock(Fun),
   ok.
@@ -65,3 +78,21 @@ nothing() ->
       end,
   lock(Fun),
   ok.
+
+
+r400ms_a(N) ->
+  Fun=fun() ->
+          LuaPath=luafile("block_400ms.lua"),
+          {ok,L}=elua:newstate(),
+          catch elua:dofile_async(L,LuaPath)
+      end,
+  lock(Fun,N).
+
+
+r400ms_s(N) ->
+  Fun=fun() ->
+          LuaPath=luafile("block_400ms.lua"),
+          {ok,L}=elua:newstate(),
+          catch elua:dofile_sync(L,LuaPath)
+      end,
+  lock(Fun,N).
