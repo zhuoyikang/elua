@@ -60,6 +60,7 @@ lock(Fun,Count) ->
                     end) end,
     lists:seq(1, Count)
    ),
+  io:format("Fork them All~n", []),
   Times = lists:map(fun(_) ->
                         receive
                           {response, Time} -> Time
@@ -69,7 +70,7 @@ lock(Fun,Count) ->
   io:format("finis ~p ~p~n", [current_utc() - Begin, statsc(Times)]).
 
 heart() ->
-  io:format("Tick~n", []).
+  io:format("Tick ~p ~n", [current_utc()]).
 
 
 %% 同步调用
@@ -101,6 +102,8 @@ nothing() ->
   ok.
 
 
+
+
 r400ms_a(N) ->
   Fun=fun() ->
           LuaPath=luafile("block_400ms.lua"),
@@ -108,6 +111,16 @@ r400ms_a(N) ->
           elua:dofile_async(L,LuaPath)
       end,
   lock(Fun,N).
+
+
+r400ms_a2(N) ->
+  Fun=fun() ->
+          LuaPath=luafile("block_400ms2.lua"),
+          {ok,L}=elua:newstate_async(),
+          elua:dofile_async(L,LuaPath)
+      end,
+  lock(Fun,N).
+
 
 
 r400ms_s(N) ->
@@ -120,10 +133,37 @@ r400ms_s(N) ->
 
 
 
+r400ms_s2(N) ->
+  Fun=fun() ->
+          LuaPath=luafile("block_400ms2.lua"),
+          {ok,L}=elua:newstate_sync(),
+          elua:dofile_sync(L,LuaPath)
+      end,
+  lock(Fun,N).
+
+
+
+
+r400ms_pure_erlang(N) ->
+  Fun=fun() ->
+          lists:usort(lists:seq(1,100000))
+      end,
+  lock(Fun,N).
+
+
+nothing(N) ->
+  Fun=fun() ->
+          lists:foreach(fun(_) ->
+                            elua:nothing_nif()
+                        end,
+                        lists:seq(1,1000000))
+      end,
+  lock(Fun,N).
+
+
+
 r400ms_sa(N) ->
   Fun=fun() ->
-          LuaPath=luafile("block_400ms.lua"),
-          {ok,L}=elua:newstate_sync(),
-          elua:dofile_async(L,LuaPath)
+          lists:usort(lists:seq(1,100000))
       end,
   lock(Fun,N).

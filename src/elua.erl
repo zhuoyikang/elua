@@ -14,6 +14,8 @@
          gencall_async/4,
          gencall_async_nif/6,
 
+         nothing_nif/0,
+
          gencast/4
         ]).
 
@@ -93,4 +95,8 @@ gencall_async_nif(_L,_Ref,_Dest,_Func,_Format,_InArgs) ->
 
 %% general cast call lua function and ignore the result
 gencast(_L,_Func,_Format,_InArgs) ->
+  not_loaded(?LINE).
+
+
+nothing_nif()->
   not_loaded(?LINE).

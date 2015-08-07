@@ -672,6 +672,15 @@ sync_gencast(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     return atom_ok;
 }
 
+
+static ERL_NIF_TERM
+nothing_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    return atom_ok;
+}
+
+
+
 static ErlNifFunc nif_funcs[] = {
     {"newstate_sync", 0, elua_newstate_sync},
     {"newstate_async_nif", 2, elua_newstate_async},
@@ -682,7 +691,9 @@ static ErlNifFunc nif_funcs[] = {
     {"gencall_sync", 4, elua_gencall_sync},
     {"gencall_async_nif", 6, elua_gencall_async},
 
-    {"gencast", 4, sync_gencast}
+    {"gencast", 4, sync_gencast},
+
+    {"nothing_nif", 0, nothing_nif}
 };
 
 ERL_NIF_INIT(elua, nif_funcs, &load, NULL, NULL, NULL);
